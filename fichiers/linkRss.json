@@ -1,0 +1,21 @@
+{
+    "lefigaro_politique":{
+        "rss":"http://www.lefigaro.fr/rss/figaro_politique.xml"
+    },
+    "lemonde_sante":{
+        "rss":"https://www.lemonde.fr/sante/rss_full.xml"
+    },
+    "lemonde_sport":{
+        "rss":"https://www.lemonde.fr/sport/rss_full.xml"
+    },
+    "lemonde_economie":{
+        "rss":"https://www.lemonde.fr/economie/rss_full.xml"
+    },
+    "lemonde_technologies":{
+        "rss":"https://www.lemonde.fr/technologies/rss_full.xml"
+    },
+    "laparisienne":{
+        "rss":"http://www.leparisien.fr/laparisienne/rss.xml"
+    }
+
+}
