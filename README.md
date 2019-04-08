@@ -18,9 +18,13 @@ Pour des liens sans flux rss : "link"
 
 Les liens pour installer les packages :
 
-pip3 install spacy
+<b>pip3 install spacy</b>
+
 sudo apt-get install python3-setuptools
+
 python3 -m spacy download en_core_web_sm
+
 python3 -m spacy download en_core_web_md
+
 python3 -m spacy download fr_core_news_sm
 
