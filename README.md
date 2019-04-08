@@ -28,3 +28,5 @@ python3 -m spacy download en_core_web_md
 
 python3 -m spacy download fr_core_news_sm
 
+Flux RSS "newspaper" : pip3 install newspaper3k 
+
