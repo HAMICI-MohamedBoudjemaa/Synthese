@@ -1,4 +1,4 @@
-Synthese
+<b>Synthese</b>
 
 EXTRACTION DES ARTICLES VIA FLUX RSS OU LES LIENS SANS FLUX RSS :
 
@@ -16,9 +16,9 @@ Pour des liens sans flux rss : "link"
 "link": "http://www.bbc.com/"
 
 
-Les liens pour installer les packages :
+<b>Les liens pour installer les packages :</b>
 
-<b>pip3 install spacy</b>
+<color="blue">pip3 install spacy</color>
 
 sudo apt-get install python3-setuptools
 
