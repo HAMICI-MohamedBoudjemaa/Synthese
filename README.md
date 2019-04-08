@@ -1,6 +1,6 @@
 <b>Synthese</b>
 
-EXTRACTION DES ARTICLES VIA FLUX RSS OU LES LIENS SANS FLUX RSS :
+<b>EXTRACTION DES ARTICLES VIA FLUX RSS OU LES LIENS SANS FLUX RSS :</b>
 
 Dans le fichiers se trouve un fichier Json contenant la liste des liens pour l'extraction des articles
 Vous pouvez ajoutez des liens flux rss ou des liens simple :
@@ -18,7 +18,7 @@ Pour des liens sans flux rss : "link"
 
 <b>Les liens pour installer les packages :</b>
 
-<color="blue">pip3 install spacy</color>
+pip3 install spacy
 
 sudo apt-get install python3-setuptools
 
