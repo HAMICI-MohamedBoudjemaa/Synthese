@@ -72,19 +72,30 @@ auth = OAuthHandler(ckey, csecret)
 auth.set_access_token(atoken, asecret)
 
 api = tweepy.API(auth)
-trends1 = api.trends_place(615702)   ### id de Paris
-# from the end of your code
-# trends1 is a list with only one element in it, which is a
-# dict which we'll put in data.
-data = trends1[0]
-# grab the trends
-trends = data['trends']
-# grab the name from each trend
-names = [trend['name'] for trend in trends]
-print(names[0])
-print(names)
 
-# create stream and filter on a searchterm
-twitterStream = Stream(auth, listener())
-twitterStream.filter(track=[names[0]],
-                 languages=["fr"], stall_warnings=True)
+last_id = None
+result = True
+while result:
+    result = api.search(q='TPMP', count=100, tweet_mode='extended', max_id=last_id)
+    for res in result:
+        print(res._json['full_text'])
+        print ("----------")
+        # we subtract one to not have the same again.
+    last_id = result[-1]._json['id'] - 1
+
+# trends1 = api.trends_place(615702)   ### id de Paris
+# # from the end of your code
+# # trends1 is a list with only one element in it, which is a
+# # dict which we'll put in data.
+# data = trends1[0]
+# # grab the trends
+# trends = data['trends']
+# # grab the name from each trend
+# names = [trend['name'] for trend in trends]
+# print(names[0])
+# print(names)
+#
+# # create stream and filter on a searchterm
+# twitterStream = Stream(auth, listener())
+# twitterStream.filter(track=[names[0]],
+#                  languages=["fr"], stall_warnings=True)
