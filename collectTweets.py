@@ -1,17 +1,12 @@
-# code for streaming twitter to a mongo db
-# for Python 3 and will support emoji characters (utf8mb4)
-# based on the Python 2 code
-# supplied by http://pythonprogramming.net/twitter-api-streaming-tweets-python-tutorial/
-# for further information on how to use python 3, twitter's api, and
-
-
-from connnexionMongo import collection
-from tweepy import Stream
-from tweepy import OAuthHandler
-from tweepy.streaming import StreamListener
-import datetime
-
 import json
+
+import tweepy
+from retrying import retry
+from tweepy import OAuthHandler
+
+from connnexionMongo import tweets, events
+from functionUtile import clean_text
+from gestion_logging import log_message
 
 # Twitter consumer key, consumer secret, access token, access secret
 ckey = "N4CogFTAcgyNxyuM8jvyrgmH7"
@@ -19,51 +14,85 @@ csecret = "UPsquIqzXdjdD6TLRFp9vf3pU0LRfeOanuxpqwO9tJ3emATshO"
 atoken = "1070779812330041344-1NgUQko3NliICcTZVKgd9m0yEzDtcY"
 asecret = "pdUZKSTVpSMSLwbpOWM09GjP75MtjXShBD7ocjAOAnrr5"
 
-
-# set up stream listener
-class listener(StreamListener):
-
-    def on_data(self, data):
-        all_data = json.loads(data)
-        # collect all desired data fields
-        if 'text' in all_data:
-            #tweet_id = all_data['id_str']  # The Tweet ID from Twitter in string format
-            tweet = all_data["text"]
-            created_at = all_data["created_at"]
-            retweeted = all_data["retweeted"]
-            username = all_data["user"]["screen_name"]
-            user_tz = all_data["user"]["time_zone"]
-            user_location = all_data["user"]["location"]
-            user_coordinates = all_data["coordinates"]
-            followers = all_data['user']['followers_count']  # The number of followers the Tweet author has
-            hashtags = all_data['entities']['hashtags']  # Any hashtags used in the Tweet
-
-            # Convert the timestamp string given by Twitter to a date object called "created". This is more easily manipulated in MongoDB.
-            created = datetime.datetime.strptime(created_at, '%a %b %d %H:%M:%S +0000 %Y')
-
-            # if coordinates are not present store blank value
-            # otherwise get the coordinates.coordinates value
-            if user_coordinates is None:
-                final_coordinates = user_coordinates
-            else:
-                final_coordinates = str(all_data["coordinates"]["coordinates"])
-
-            #created = datetime.datetime.strptime(created_at)
-            tweetts = {'username': username, 'followers': followers, 'tweet': tweet,
-                       'hashtags': hashtags, 'userTimeZone':user_tz, 'userLocation':user_location, 'retweeted':retweeted, 'created':created}
-            print((tweetts))
-            collection.save(tweetts);
-            return True
-        else:
-            return True
-
-    def on_error(self, status):
-        print(status)
-
-
 auth = OAuthHandler(ckey, csecret)
 auth.set_access_token(atoken, asecret)
+api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
-# create stream and filter on a searchterm
-twitterStream = Stream(auth, listener())
-twitterStream.filter(track=["booba"],languages=["fr"], stall_warnings=True)
+"""
+Recuperer les tendances 
+"""
+def getTrend():
+    try:
+        trends1 = api.trends_place(615702)  ### id de Paris
+        data = trends1[0]
+        trends = data['trends']
+        names = [trend['name'] for trend in trends]
+    except (KeyboardInterrupt, SystemExit):
+        log_message('Erreur recupération des tendances ', 'error')
+        raise
+    return names
+"""
+recuperer les elements du tweets
+"""
+@retry
+def getElementTweet(trend):
+    #-filter:retweets : supprimer les retweets
+    #new_search = trend + '-filter:retweets',
+    data_array = []
+    for page in tweepy.Cursor(api.search, q=trend + ' -filter:retweets', count=100, tweet_mode='extended',lang="fr").pages(10):
+        for res in page:
+            json_str = json.dumps(res._json)
+            data_json = json.loads(json_str)
+            tendance = trend
+            tweet_id = data_json['id_str']
+            id_user = data_json['user']['id']
+            username = clean_text(data_json['user']['name'])
+            screen_name = clean_text(data_json['user']['screen_name'])
+            followers = data_json['user']['followers_count']
+            description = clean_text(data_json['user']['description'])
+            tweet_text = clean_text(data_json['full_text'])
+            hashtags = data_json['entities']['hashtags']
+            retweet_count = data_json['retweet_count']
+            userLocation = data_json['user']['location']
+            created_at = data_json['created_at']
+            #created_at = datetime.datetime.strptime(str(created_at), '%Y-%m-%d %H:%M:%S')
+            data = {
+                    'tendance': tendance,
+                    'tweet_id':tweet_id,
+                    'id_user': id_user,
+                    'username': username,
+                    'screen_name': screen_name,
+                    'followers': followers,
+                    'description': description,
+                    'tweet_text': tweet_text,
+                    'hashtags': hashtags,
+                    'userLocation': userLocation,
+                    'retweet_count': retweet_count,
+                    'created': created_at
+                    }
+            log_message(data, 'info')
+            data_array.append(data)
+    return data_array
+
+
+"""
+Enreistre les données dans la base mongo
+"""
+def saveCollectionMongo(data):
+    tweets.insert_many(data)
+
+def collect_tweet():
+    log_message(getTrend(), 'warn')
+    tr = getTrend()
+    print(len(tr))
+    for trend in getTrend():
+        data = getElementTweet(trend)
+        saveCollectionMongo(data)
+
+        event = {'id':trend, 'description':'', 'lieu': '', 'date': ''}
+        events.save(event)
+
+
+
+if __name__ == '__main__':
+    collect_tweet()
