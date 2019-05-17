@@ -1,3 +1,4 @@
+<<<<<<< HEAD:Python/requeteMongo.py
 
 """
 retourne les tweets d'une tendance renseigné
@@ -5,15 +6,30 @@ retourne les tweets d'une tendance renseigné
 from connnexionMongo import *
 
 
+=======
+from connexionMongoBis import *
+
+>>>>>>> master:requeteMongo.py
 def getTweetByTrend(trend):
     return tweets.find({'tendance': trend})
 
-"""
-retourne toutes les tendances de l'évenement (collectioon : events)
-"""
 def getAllTrend():
-    return tweets.find()
+    q= events.find()
+    tendance = []
+    for trend in q:
+        tr = trend['id']
+        tendance.append(tr)
+    return tendance
 
+def getTweetAllTrend():
+    for tr in getAllTrend():
+        trend = getTweetByTrend(tr)
+        tweet_text =[]
+        for tend in trend:
+            tweet = tend['tweet_text']
+            tweet_text.append(tweet)
+            result = ' '.join(tweet_text)
+    return result
 
 #Structure champs monfo
 """"
@@ -30,12 +46,4 @@ def getAllTrend():
     "retweet_count": 
     "created": 
 """
-
-if __name__ == '__main__':
-    i = 0
-    for doc in getTweetByTrend('#Tech4Good'):
-        print(doc['hashtags'][0]['text'])
-        i = i +1
-    print(i)
-
 
