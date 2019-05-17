@@ -1,7 +1,7 @@
-import datetime
-
-from Python.connexionMongoLocal import *
-
+"""
+retourne les tweets d'une tendance renseigné
+"""
+from connnexionMongo import *
 
 def getTweetByTrend(trend):
     return tweets.find({'tendance': trend})

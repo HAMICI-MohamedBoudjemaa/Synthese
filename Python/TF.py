@@ -98,6 +98,141 @@ def trigrams(text):
     print("This is tri-grams")
     return  listWords
 
+
+def quadrigrams(text):
+    words = word_tokenize(text)
+    words = lower(words)
+    words = deleteStopWords(words)
+    i=0
+    triwords = []
+    listWords = {}
+    while i<len(words)-3:
+        triwords.append(words[i]+' '+words[i+1]+' '+words[i+2]+' '+words[i+3])
+        i+=1
+
+    for word in triwords :
+        if word in listWords :
+            listWords[word]+=1
+        else :
+            listWords[word]=1
+
+    for word in listWords :
+        listWords[word]=listWords[word]/i
+    print("This is quadri-grams")
+    return  listWords
+
+def fiftgrams(text):
+    words = word_tokenize(text)
+    words = lower(words)
+    words = deleteStopWords(words)
+    i=0
+    triwords = []
+    listWords = {}
+    while i<len(words)-4:
+        triwords.append(words[i]+' '+words[i+1]+' '+words[i+2]+' '+words[i+3]+' '+words[i+4])
+        i+=1
+
+    for word in triwords :
+        if word in listWords :
+            listWords[word]+=1
+        else :
+            listWords[word]=1
+
+    for word in listWords :
+        listWords[word]=listWords[word]/i
+    print("This is fift-grams")
+    return  listWords
+
+
+def sixgrams(text):
+    words = word_tokenize(text)
+    words = lower(words)
+    words = deleteStopWords(words)
+    i=0
+    triwords = []
+    listWords = {}
+    while i<len(words)-5:
+        triwords.append(words[i]+' '+words[i+1]+' '+words[i+2]+' '+words[i+3]+' '+words[i+4]+' '+words[i+5])
+        i+=1
+
+    for word in triwords :
+        if word in listWords :
+            listWords[word]+=1
+        else :
+            listWords[word]=1
+
+    for word in listWords :
+        listWords[word]=listWords[word]/i
+    print("This is six-grams")
+    return  listWords
+
+
+def sevengrams(text):
+    words = word_tokenize(text)
+    words = lower(words)
+    words = deleteStopWords(words)
+    i=0
+    triwords = []
+    listWords = {}
+    while i<len(words)-6:
+        triwords.append(words[i]+' '+words[i+1]+' '+words[i+2]+' '+words[i+3]+' '+words[i+4]+' '+words[i+5]+' '+words[i+6])
+        i+=1
+
+    for word in triwords :
+        if word in listWords :
+            listWords[word]+=1
+        else :
+            listWords[word]=1
+
+    for word in listWords :
+        listWords[word]=listWords[word]/i
+    print("This is seven-grams")
+    return  listWords
+
+def eightgrams(text):
+    words = word_tokenize(text)
+    words = lower(words)
+    words = deleteStopWords(words)
+    i=0
+    triwords = []
+    listWords = {}
+    while i<len(words)-7:
+        triwords.append(words[i]+' '+words[i+1]+' '+words[i+2]+' '+words[i+3]+' '+words[i+4]+' '+words[i+5]+' '+words[i+6]+' '+words[i+7])
+        i+=1
+
+    for word in triwords :
+        if word in listWords :
+            listWords[word]+=1
+        else :
+            listWords[word]=1
+
+    for word in listWords :
+        listWords[word]=listWords[word]/i
+    print("This is eight-grams")
+    return  listWords
+
+def ninegrams(text):
+    words = word_tokenize(text)
+    words = lower(words)
+    words = deleteStopWords(words)
+    i=0
+    triwords = []
+    listWords = {}
+    while i<len(words)-8:
+        triwords.append(words[i]+' '+words[i+1]+' '+words[i+2]+' '+words[i+3]+' '+words[i+4]+' '+words[i+5]+' '+words[i+6]+' '+words[i+7]+' '+words[i+8])
+        i+=1
+
+    for word in triwords :
+        if word in listWords :
+            listWords[word]+=1
+        else :
+            listWords[word]=1
+
+    for word in listWords :
+        listWords[word]=listWords[word]/i
+    print("This is nine-grams")
+    return  listWords
+
 def top(listWords,n):
     listWordsMax = []
     max = []
