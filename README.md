@@ -30,7 +30,7 @@ python3 -m spacy download fr_core_news_sm
 
 Flux RSS "newspaper" : pip3 install newspaper3k 
 
-<b>Connexion à la base de données mongodb en ligne :<b>
+<b>Connexion à la base de données mongodb en ligne :</b>
  
  Pour acceder à la base de donnée mongo en ligne, utiliser les config suiuvant dans le fichier connexionMongo
  
