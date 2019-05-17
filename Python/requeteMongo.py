@@ -1,15 +1,8 @@
-<<<<<<< HEAD:Python/requeteMongo.py
+import datetime
 
-"""
-retourne les tweets d'une tendance renseigné
-"""
-from connnexionMongo import *
+from Python.connexionMongoLocal import *
 
 
-=======
-from connexionMongoBis import *
-
->>>>>>> master:requeteMongo.py
 def getTweetByTrend(trend):
     return tweets.find({'tendance': trend})
 
@@ -31,6 +24,34 @@ def getTweetAllTrend():
             result = ' '.join(tweet_text)
     return result
 
+"""
+Ajoute la description à chaque doc de la collection events
+trend : tendence
+description : la description
+"""
+def setEventDescriptionByTrend(trend, description):
+    update = events.update({'id':trend}, {'$set':{'description':description}})
+    return update
+
+"""
+Ajoute le lieu à chaque doc de la collection events
+trend : tendence
+lieu : le lieu
+"""
+def setEventLieuByTrend(trend, lieu):
+    update = events.update({'id':trend}, {'$set':{'lieu':lieu}})
+    return update
+
+"""
+Ajoute la date à chaque doc de la collection events
+trend : tendence
+date : la date
+"""
+def setEventDateByTrend(trend, date):
+    date = datetime.datetime.strptime(date,  '%d/%m/%Y')
+    update = events.update({'id':trend}, {'$set':{'date':date}})
+    return update
+
 #Structure champs monfo
 """"
     "tendance" :
@@ -46,4 +67,3 @@ def getTweetAllTrend():
     "retweet_count": 
     "created": 
 """
-
