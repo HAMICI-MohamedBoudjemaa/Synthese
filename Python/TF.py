@@ -121,17 +121,7 @@ def top(listWords,n):
 
 
 
-file = open('./tweets/#19hRuthElkrief.txt','r',encoding='utf-8')
-text = file.read()
+#file = open('./tweets/#19hRuthElkrief.txt','r',encoding='utf-8')
+#text = file.read()
 #text = "mon text , jd , ! ! ! , , ,$ $"
-list = trigrams(text)
-print(top(list,5))
-
-list = bigrams(text)
-print(top(list,5))
-
-list = TF(text)
-print(top(list,5))
-
-
-file.close()
+#file.close()
