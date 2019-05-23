@@ -4,9 +4,9 @@ import tweepy
 from retrying import retry
 from tweepy import OAuthHandler
 
-from connnexionMongo import tweets, events
-from functionUtile import clean_text
-from gestion_logging import log_message
+from Python.connnexionMongo import tweets, events
+from Python.functionUtile import clean_text
+from Python.gestion_logging import log_message
 
 # Twitter consumer key, consumer secret, access token, access secret
 ckey = "N4CogFTAcgyNxyuM8jvyrgmH7"
@@ -89,7 +89,7 @@ def collect_tweet():
         data = getElementTweet(trend)
         saveCollectionMongo(data)
 
-        event = {'id':trend, 'description':'', 'lieu': '', 'date': ''}
+        event = {'id':trend, 'description':'', 'lieu': '', 'date': '', 'status':False}
         events.save(event)
 
 
