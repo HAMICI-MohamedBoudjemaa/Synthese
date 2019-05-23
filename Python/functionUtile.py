@@ -1,5 +1,5 @@
 import re
-from urllib import parse as urlparse
+
 
 def remove_emoji(string):
     emoji_pattern = re.compile("["
@@ -17,28 +17,5 @@ def clean_text(txt):
     txt = remove_emoji(txt)
     txt = re.sub(r"http[s]\S*", "",txt)
     txt = txt.replace('  ',' ')
-    #txt = txt.replace('#','')
+    txt = txt.replace("\n","")
     return txt
-
-"""def removeCaract(text):
-    new_string = ''
-    for i in text.split():
-        s, n, p, pa, q, f = urlparse.urlparse(i)
-        if s and n:
-            pass
-        elif i[:1] == '@':
-            pass
-        elif i[:1] == '#':
-            new_string = new_string.strip() + ' ' + i[1:]
-        elif i[:1] == 'htpps':            new_string = new_string.strip() + ' ' + i[1:]
-        else:
-            new_string = new_string.strip() + ' ' + i
-
-    return new_string"""
-    #return ' '.join(re.sub("([@#][A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)", " ", text).split())
-
-if __name__ == '__main__':
-    print('---------------------------------------------')
-    print(clean_text("Paris 13 c'est vrmt des chics types #Parcoursup #merci #vousmavezsauvé https://bit.ly//WjdiW# Côte d'Ivoire 🇨🇮❤  🤪🤩.️"))
-    print('---------------------------------------------')
-    #print(removeCaract("Paris 13 c'est vrmt des chics types #Parcoursup #merci #vousmavezsauvé https://bit.ly//WjdiW# Côte d'Ivoire 🇨🇮❤️"))
