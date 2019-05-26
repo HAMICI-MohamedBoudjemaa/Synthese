@@ -34,7 +34,7 @@ def getAllTrend():
 """
 retourne tous les tweets de chaque tendance 
 """
-def getTweetByTrend():
+def getTweetByTrends():
     for tr in getAllTrendIfStatusIsFalse():
         trend = getTweetByTrend(tr)
         tweet_text =[]
