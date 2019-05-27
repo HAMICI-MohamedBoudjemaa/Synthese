@@ -80,11 +80,10 @@ def setFieldEventByTrend(trend, description, lieu, date):
     update = events.update({'id': trend}, {'$set': {'description': description, 'lieu':lieu, 'date':date, 'status':True}})
     return update
 
-def getCountTweet_text(trend):
-    cpt = tweets.find({"tendance": trend}).count()
-    return cpt
-
-def getRetweet_count(trend):
+"""
+retourne le nombre de tweets, nombre retweets,  nombre utilisateur et la date du premier tweet d'une tendance données
+"""
+def getCountElementTrend(trend):
     rt = [{"$match": {"tendance": trend}},
           {"$group": {"_id": "$tendance",
                       "date_premier_tweet": { "$min": "$created"},
@@ -95,10 +94,10 @@ def getRetweet_count(trend):
 
     cursor = tweets.aggregate(rt)
     result = list(cursor)
-    rs = {"nb_tw": getCountTweet_text(trend),
+    rs = {"nb_tw": getTweetByTrend(trend).count(),
           "nb_rt":result[0]['nombre_retweet'],
           "nb_user":result[0]['nb_user'],
-          "date_premier_tweet":result[0]['date_premier_tweet'],}
+          "date_premier_tweet":result[0]['date_premier_tweet']}
 
     return rs
 
@@ -130,4 +129,4 @@ def getRetweet_count(trend):
 """
 
 if __name__ == '__main__':
-    print(getRetweet_count("#MondayMotivation"))
+    print(getCountElementTrend("#MondayMotivation"))
