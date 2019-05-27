@@ -1,6 +1,6 @@
 import datetime
 
-from Python.connexionMongoLocal import *
+from Python.connexionLocal import *
 
 """
 à partir d'une tendance renseigné recupère tous les documents lui correspondant
@@ -86,14 +86,21 @@ def getCountTweet_text(trend):
 
 def getRetweet_count(trend):
     rt = [{"$match": {"tendance": trend}},
-          {"$group": {"_id": "$tendance","nombre_retweet": {"$sum": "$retweet_count"},
-                                         "nb_user": {"$sum": "id_user"}
+          {"$group": {"_id": "$tendance",
+                      "date_premier_tweet": { "$min": "$created"},
+                      "nombre_retweet": {"$sum": "$retweet_count"},
+                      "nb_user": {"$sum": 1}
         }}]
+
+
     cursor = tweets.aggregate(rt)
     result = list(cursor)
-    rs = {"nb_tw": getCountTweet_text(trend),"nb_rt":result[0]['nombre_retweet']}
+    rs = {"nb_tw": getCountTweet_text(trend),
+          "nb_rt":result[0]['nombre_retweet'],
+          "nb_user":result[0]['nb_user'],
+          "date_premier_tweet":result[0]['date_premier_tweet'],}
 
-    return result
+    return rs
 
 
 
@@ -124,4 +131,3 @@ def getRetweet_count(trend):
 
 if __name__ == '__main__':
     print(getRetweet_count("#MondayMotivation"))
-    print(getCountTweet_text("#MondayMotivation"))
