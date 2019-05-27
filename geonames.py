@@ -1,87 +1,202 @@
 import requests
 import re
 from fuzzywuzzy import fuzz
-from fuzzywuzzy import process
+from datetime import datetime
+from elasticsearch import Elasticsearch
+from elasticsearch_dsl import Search
+from Place import *
+from elasticsearch_dsl import connections
 
-def isPlace(str):
-    url = 'http://api.geonames.org/search'
-    username = 'hongphuc95'
-    maxRows = '5'
-    q = str
-    #fuzzy = '0.8'  # Precision
-    type = 'json'
-    lang = 'en'  # Anglais par defaut
 
-    response = requests.get(
-        url,
-        params=
-        {
-            'username': username,
-            'maxRows': maxRows,
-            'type': type,
-            'q': q,
-        }
-    )
+def searchGeoidCountryByName(name):
+    es = Elasticsearch(
+        ["https://elastic:abQ4dELdOF6BDjxlotnF8JPW@a6e8c7481efc4507a806032397318270.eu-central-1.aws.cloud.es.io:9243"])
+    s = Search(using=es, index="countryinfo-2019.05.27")
+    s = s.query("match", Country=name)
 
-    data = response.json()
-    #if response.status_code == 200:
-    #    #TODO
-    #elif response.status_code == 404:
-    #    print('404 Pas Trouve.')
-    #else:
-    #    print('Oopsie doopsie')
-    #
-    if data is not None:
-        if not data['geonames']:
-            return 'Nope'
-        else :
-            if len(str.split()) == 1:
-                nameLookupDict = {};
-                for dataGeo in data['geonames']:
-                    nameLookup = dataGeo['name']
-                    fuziness = fuzz.ratio(str, nameLookup)
-                    nameLookupDict[nameLookup] = fuziness
-                    for name in nameLookupDict:
-                        if nameLookupDict[name] > 80:
-                            return 'Passed'
-                            break
-                        return 'Considered'
-            elif len(str.split()) == 2:
-                for dataGeo in data['geonames']:
-                    nameLookup = dataGeo['name']
-                    fuziness = fuzz.ratio(str, nameLookup)
-                    if fuziness > 80:
-                        return 'Passed'
-                    else:
-                        return 'Nope'
+    response = s.execute()
+    responseDict = response.to_dict()
+
+    nbRes = responseDict['hits']['total']['value']
+    if nbRes > 0:
+        countryName = responseDict['hits']['hits'][0]['_source']['Country']
+        fuziness = fuzz.ratio(name, countryName)
+        if fuziness > 90:
+            res = responseDict['hits']['hits'][0]['_source']['geonameid']
+            return res
+        else:
+            return None
     else:
         return None
 
+def searchAllByGeonameid(geonameid):
+    es = Elasticsearch(
+        ["https://elastic:abQ4dELdOF6BDjxlotnF8JPW@a6e8c7481efc4507a806032397318270.eu-central-1.aws.cloud.es.io:9243"])
+    s = Search(using=es, index="geoname-2019.05.16")
+    s = s.query("match", geonameid=geonameid)
+
+    response = s.execute()
+    responseDict = response.to_dict()
+    found = None
+
+    nbRes = responseDict['hits']['total']['value']
+    if nbRes > 0:
+        found = responseDict['hits']['hits'][0]['_source']
+    return found
+
+
+def searchGeoidPlaceByName(name):
+    es = Elasticsearch(
+        ["https://elastic:abQ4dELdOF6BDjxlotnF8JPW@a6e8c7481efc4507a806032397318270.eu-central-1.aws.cloud.es.io:9243"])
+    s = Search(using=es, index="geoname-2019.05.16")
+    s = s.query("match", name=name)
+    s = s.query("exists", field="alternatenames")
+    #s = s.sort({"_script": {
+    #     "script": "doc['alternatenames.keyword'].size()",
+    #     "type": "number",
+    #     "order": "asc"
+    #  }
+   #})
+
+    response = s.execute()
+    responseDict = response.to_dict()
+    found = None
+
+    nbRes = responseDict['hits']['total']['value']
+    if nbRes > 0:
+        found = []
+        resContent = responseDict['hits']['hits']
+        for i in range(len(resContent)):
+            if len(found) == 5:
+                break
+            res = resContent[i]['_source']
+            fuziness = fuzz.ratio(name, res['name'])
+            if fuziness > 65:
+                found.append(res['geonameid'])
+
+    return found
+
+
+def searchGeoidByName(name):
+    es = Elasticsearch(["https://elastic:abQ4dELdOF6BDjxlotnF8JPW@a6e8c7481efc4507a806032397318270.eu-central-1.aws.cloud.es.io:9243"])
+    s = Search(using=es, index="alternatenames-2019.05.17")
+    s = s.query("match", alternatename=name)
+    s.aggs.bucket('countResults', 'terms', field='geonameid.keyword')
+
+    response = s.execute()
+    responseDict = response.to_dict()
+    found = None
+
+    results = responseDict['aggregations']['countResults']['buckets']
+    if len(results) > 0:
+        i = 0
+        found = []
+        for i in range(len(results)):
+            if i == 3:
+                break
+
+            geonameId = results[i]['key']
+            docCount = results[i]['doc_count']
+            if docCount >= 5:
+                resultGeoname = searchAllByGeonameid(geonameId)
+                if resultGeoname is not None:
+                    nameLookup = resultGeoname['name']
+                    fuziness = fuzz.ratio(name, nameLookup)
+                    if fuziness > 50:
+                        found.append(resultGeoname)
+    return found
+
+def textProcessing(text):
+    text = re.sub(r'\-', ' ', text)
+    text = re.sub(r'\"', '', text)
+    placeDict = []
+    placeRegex = re.compile(r'([A-Z][A-Za-z]+(\s+[A-Z][a-z]+)*)')
+    hashtagRegex = re.compile(r'\#[A-Za-z0-9]*')
+    places = placeRegex.findall(text)
+    hashtags = hashtagRegex.findall(text)
+
+    for place in places:
+        place = place[0].strip()
+        placeDict.append(place)
+
+    for hashtag in hashtags:
+        hashtag = hashtag.replace('#', '')
+        if re.search('^[a-z].*', hashtag):
+            hashtag = hashtag.capitalize()  # notredame -> Notredame
+
+        placeDict.append(hashtag)
+
+    for place in placeDict:
+        if place.isupper():  # WASHINGTON -> #Washington
+            place = place.lower()
+            place = place.capitalize()
+
+        placeSplit = place.split()
+        if len(placeSplit) > 0:
+            for i in range(len(placeSplit)):
+                upperCaseWord = re.findall('[A-Z][^A-Z]*', placeSplit[i])  # NotreDame -> Notre Dame
+                if len(upperCaseWord) > 1:
+                    placeSplit[i] = " ".join(upperCaseWord)
+            place = " ".join(placeSplit)
+
+    return placeDict
 
 if __name__ == '__main__':
-    text = "WASHINGTON — At a meeting of President Trump’s top national security aides last Thursday, Acting Defense Secretary Patrick Shanahan presented an updated military plan that envisions sending as many as 120,000 troops to the Middle East should Iran attack American forces or accelerate work on nuclear weapons, administration officials said.[To follow new military deployments to the Middle East, sign up for the weekly At War newsletter.] The revisions were ordered by hard-liners led by John R. Bolton, Mr. Trump’s national security adviser. They do not call for a land invasion of Iran, which would require vastly more troops, officials said. The development reflects the influence of Mr. Bolton, one of the administration’s most virulent Iran hawks, whose push for confrontation with Tehran was ignored more than a decade ago by President George W. Bush. It is highly uncertain whether Mr. Trump, who has sought to disentangle the United States from Afghanistan and Syria, ultimately would send so many American forces back to the Middle East."
-    #text = '14 mai 1610. Le Mans du roi Henri IV est bloqué rue de la Ferronnerie, à Paris, par une charrette de foin. Ravaillac en profite pour monter sur une des roues et poignarde le roi !Ravaillac sera torturé, écartelé, brûlé, et ses cendres jetées au vent.'
-    textArray = re.split(' |\. |, ', text)
-    lastWord = None
-    for word in textArray:
-        if re.search('^#.*', word):
-            word = word.replace('#', '')
-            #if word.istitle() or word.isupper() :
-        if isPlace(word) == 'Passed':
-            print("{} is a place".format(word))
-            lastWord = None
-        else:
-            if lastWord is not None:
-                newStr = lastWord + " " + word
-                if isPlace(newStr) == 'Passed':
-                    print("{} is a place".format(newStr))
-                    lastWord = None
+    #str = "Today i visited Paris, they have an amazing cathedral named Notre-Dame"
+    f = open("/Users/phucvu/Desktop/elastic/logstash-7.0.1/textFile/testText.txt", "r")
+    str = f.read()
+
+    placeExtracted = textProcessing(str)
+    if placeExtracted is not None:
+        for place in placeExtracted:
+            type = None
+            resultPlace = []
+            placeInfoArray = searchGeoidCountryByName(place)
+
+            if placeInfoArray is not None:
+                type = 'Country'
+            else :
+                type = 'Other'
+
+            if type == 'Country' :
+                placeObject = Place()
+                info = searchAllByGeonameid(placeInfoArray)
+                placeObject.name = info['name']
+                placeObject.type = info['featureClass']
+                if info['countryCode'] is not None:
+                    placeObject.ofCountry = info['countryCode']
                 else:
-                    if isPlace(word) == 'Considered':
-                        lastWord = word
-            else:
-                if isPlace(word) == 'Considered':
-                    lastWord = word
+                    placeObject.ofCountry = "Not Available"
+                resultPlace.append(placeObject)
+
+            if type == 'Other':
+                placeInfoArray = searchGeoidPlaceByName(place)
+                if placeInfoArray is not None:
+
+                    for placeInfo in placeInfoArray:
+                        placeObject = Place()
+                        info = searchAllByGeonameid(placeInfo)
+                        placeObject.name = info['name']
+                        placeObject.type = info['featureClass']
+                        if info['countryCode'] is not None:
+                            placeObject.ofCountry = info['countryCode']
+                        else :
+                            placeObject.ofCountry = "Not Available"
+                        resultPlace.append(placeObject)
+
+            resultsStr = []
+            for element in resultPlace:
+                resultsStr.append(
+                    '[' + 'name: ' + element.name + ', type: ' + element.type + ', countryCode: ' + element.ofCountry + ']')
+
+            outStr = " || ".join(resultsStr)
+            print('<' + place + '>' + outStr)
+
+
+
+
+
+
 
 
 
