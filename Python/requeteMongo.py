@@ -1,6 +1,9 @@
 import datetime
 
-from Python.connnexionMongo import *
+from attr import fields
+from pymongo import UpdateOne
+
+from Python.connexionMongoLocal import *
 
 """
 à partir d'une tendance renseigné recupère tous les documents lui correspondant
@@ -50,7 +53,7 @@ trend : tendence
 description : la description
 """
 def setEventDescriptionByTrend(trend, description):
-    update = events.update({'id':trend}, {'$set':{'description':description}})
+    update = events.update({'id':trend}, {'$set':{'description':description, 'status':True}})
     return update
 """
 Ajoute le lieu à chaque doc de la collection events
@@ -70,6 +73,7 @@ def setEventDateByTrend(trend, date):
     date = datetime.datetime.strptime(date,  '%d/%m/%Y')
     update = events.update({'id':trend}, {'$set':{'date':date}})
     return update
+
 
 """
 Mets à jours les champs vide de la collection events(description, lieu, date, status)
@@ -104,3 +108,4 @@ def setFieldEventByTrend(trend, description, lieu, date):
     "date" 
     "status" 
 """
+
