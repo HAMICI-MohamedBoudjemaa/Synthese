@@ -1,21 +1,41 @@
-"""
-retourne les tweets d'une tendance renseigné
-"""
-from connnexionMongo import *
+import datetime
 
+from Python.connnexionMongo import *
+
+"""
+à partir d'une tendance renseigné recupère tous les documents lui correspondant
+dans la collection tweets
+"""
 def getTweetByTrend(trend):
     return tweets.find({'tendance': trend})
 
-def getAllTrend():
-    q= events.find()
-    tendance = []
+"""
+renvoie toutes les tendances de la collection events non traités (tendance -> champs id, status -> false)
+"""
+def getAllTrendIfStatusIsFalse():
+    q= events.find({'status':False})
+    tendances = []
     for trend in q:
         tr = trend['id']
-        tendance.append(tr)
-    return tendance
+        tendances.append(tr)
+    return tendances
 
-def getTweetAllTrend():
-    for tr in getAllTrend():
+"""
+retourne toutes les tendances de la collection events 
+"""
+def getAllTrend():
+    q= events.find()
+    tendances = []
+    for trend in q:
+        tr = trend['id']
+        tendances.append(tr)
+    return tendances
+
+"""
+retourne tous les tweets de chaque tendance 
+"""
+def getTweetByTrends():
+    for tr in getAllTrendIfStatusIsFalse():
         trend = getTweetByTrend(tr)
         tweet_text =[]
         for tend in trend:
@@ -32,7 +52,6 @@ description : la description
 def setEventDescriptionByTrend(trend, description):
     update = events.update({'id':trend}, {'$set':{'description':description}})
     return update
-
 """
 Ajoute le lieu à chaque doc de la collection events
 trend : tendence
@@ -52,18 +71,36 @@ def setEventDateByTrend(trend, date):
     update = events.update({'id':trend}, {'$set':{'date':date}})
     return update
 
-#Structure champs monfo
+"""
+Mets à jours les champs vide de la collection events(description, lieu, date, status)
+"""
+def setFieldEventByTrend(trend, description, lieu, date):
+    date = datetime.datetime.strptime(date, '%d/%m/%Y')
+    update = events.update({'id': trend}, {'$set': {'description': description, 'lieu':lieu, 'date':date, 'status':True}})
+    return update
+
+
+#Structure champs collection tweets
 """"
-    "tendance" :
-    "tweet_id" :
-    "id_user" :
-    "username" :
-    "screen_name" :
-    "followers" :
-    "description" :
-    "tweet_text" : 
+    "tendance" 
+    "tweet_id" 
+    "id_user" 
+    "username" 
+    "screen_name" 
+    "followers" 
+    "description" 
+    "tweet_text" :
     "hashtags":  ['hashtags'][indice]['text']
     "userLocation": 
     "retweet_count": 
     "created": 
+"""
+
+#Structure champs collection events
+""""
+    "id" -> tendance 
+    "description"
+    "lieu" 
+    "date" 
+    "status" 
 """
