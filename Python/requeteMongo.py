@@ -1,9 +1,7 @@
 import datetime
 
-from attr import fields
-from pymongo import UpdateOne
+from connnexionMongo import *
 
-from Python.connexionMongoLocal import *
 
 """
 à partir d'une tendance renseigné recupère tous les documents lui correspondant
