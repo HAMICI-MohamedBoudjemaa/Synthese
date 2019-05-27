@@ -1,7 +1,6 @@
 import datetime
 
-from connnexionMongo import *
-
+from Python.connnexionMongo import *
 
 """
 à partir d'une tendance renseigné recupère tous les documents lui correspondant
@@ -81,6 +80,28 @@ def setFieldEventByTrend(trend, description, lieu, date):
     update = events.update({'id': trend}, {'$set': {'description': description, 'lieu':lieu, 'date':date, 'status':True}})
     return update
 
+"""
+retourne le nombre de tweets, nombre retweets,  nombre utilisateur et la date du premier tweet d'une tendance données
+"""
+def getCountElementTrend(trend):
+    rt = [{"$match": {"tendance": trend}},
+          {"$group": {"_id": "$tendance",
+                      "date_premier_tweet": { "$min": "$created"},
+                      "nombre_retweet": {"$sum": "$retweet_count"},
+                      "nb_user": {"$sum": 1}
+        }}]
+
+
+    cursor = tweets.aggregate(rt)
+    result = list(cursor)
+    rs = {"nb_tw": getTweetByTrend(trend).count(),
+          "nb_rt":result[0]['nombre_retweet'],
+          "nb_user":result[0]['nb_user'],
+          "date_premier_tweet":result[0]['date_premier_tweet']}
+
+    return rs
+
+
 
 #Structure champs collection tweets
 """"
@@ -107,3 +128,5 @@ def setFieldEventByTrend(trend, description, lieu, date):
     "status" 
 """
 
+if __name__ == '__main__':
+    print(getCountElementTrend("#MondayMotivation"))
