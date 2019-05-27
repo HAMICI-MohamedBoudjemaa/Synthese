@@ -1,14 +1,18 @@
 from TF import *
 from requeteMongo import *
 
-trends = getAllTrend()
+trends = getAllTrendIfStatusIsFalse()
 
 for trend in trends :
     print(trend)
     docs = getTweetByTrend(trend)
     text = ''
     for doc in docs:
-        text += (doc['tweet_text'])
+        i = 0
+        while i < doc['retweet_count'] :
+            text += (doc['tweet_text'])
+            i+=1
+
 
     list = ninegrams(text)
     print(top(list, 5))
@@ -26,7 +30,7 @@ for trend in trends :
 
     list = fiftgrams(text)
     print(top(list, 5))
-    #setEventDescriptionByTrend(trend, top(list, 1))
+    setEventDescriptionByTrend(trend, top(list, 1))
 
     list = quadrigrams(text)
     print(top(list, 5))
