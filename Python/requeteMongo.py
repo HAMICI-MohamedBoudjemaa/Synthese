@@ -1,8 +1,5 @@
 import datetime
 
-from attr import fields
-from pymongo import UpdateOne
-
 from Python.connexionMongoLocal import *
 
 """
@@ -83,6 +80,22 @@ def setFieldEventByTrend(trend, description, lieu, date):
     update = events.update({'id': trend}, {'$set': {'description': description, 'lieu':lieu, 'date':date, 'status':True}})
     return update
 
+def getCountTweet_text(trend):
+    cpt = tweets.find({"tendance": trend}).count()
+    return cpt
+
+def getRetweet_count(trend):
+    rt = [{"$match": {"tendance": trend}},
+          {"$group": {"_id": "$tendance","nombre_retweet": {"$sum": "$retweet_count"},
+                                         "nb_user": {"$sum": "id_user"}
+        }}]
+    cursor = tweets.aggregate(rt)
+    result = list(cursor)
+    rs = {"nb_tw": getCountTweet_text(trend),"nb_rt":result[0]['nombre_retweet']}
+
+    return result
+
+
 
 #Structure champs collection tweets
 """"
@@ -109,3 +122,6 @@ def setFieldEventByTrend(trend, description, lieu, date):
     "status" 
 """
 
+if __name__ == '__main__':
+    print(getRetweet_count("#MondayMotivation"))
+    print(getCountTweet_text("#MondayMotivation"))
