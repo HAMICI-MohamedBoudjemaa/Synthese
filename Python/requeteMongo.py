@@ -1,6 +1,6 @@
 import datetime
 
-from Python.connnexionMongo import *
+from Python.connexionLocal import *
 
 """
 à partir d'une tendance renseigné recupère tous les documents lui correspondant
@@ -89,7 +89,9 @@ def getCountElementTrend(trend):
                       "date_premier_tweet": { "$min": "$created"},
                       "nombre_retweet": {"$sum": "$retweet_count"},
                       "nb_user": {"$sum": 1}
-        }}]
+                     }
+          }
+         ]
 
 
     cursor = tweets.aggregate(rt)
@@ -101,9 +103,26 @@ def getCountElementTrend(trend):
 
     return rs
 
+"""
+Recherche un text dans le Titre du flux RSS, trie par ordre score
+et retourne le titre ayant le plus grand score
+"""
+def searchTextInTitleFluxRSS(search_text):
+    array = []
+    cursor = fluxRSS.find(
+        {'$text': {'$search': search_text}},
+        {'score': {'$meta': 'textScore'}})
+    # Sort by 'score' field.
+    cursor.sort([('score', {'$meta': 'textScore'})])
+    for doc in cursor:
+        array.append(doc)
+    return array[0]['titre']
 
 
-#Structure champs collection tweets
+
+
+
+    #Structure champs collection tweets
 """"
     "tendance" 
     "tweet_id" 
@@ -127,6 +146,3 @@ def getCountElementTrend(trend):
     "date" 
     "status" 
 """
-
-if __name__ == '__main__':
-    print(getCountElementTrend("#MondayMotivation"))

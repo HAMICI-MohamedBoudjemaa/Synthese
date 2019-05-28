@@ -81,9 +81,40 @@
     },
     "francetvinfo : Decouvertes":{
         "rss": "https://www.francetvinfo.fr/decouverte.rss"
+    },
+    "francetvinfo": {
+        "rss": "https://www.francetvinfo.fr/titres.rss"
+    },
+    "francetvinfo monde": {
+        "rss": "https://www.francetvinfo.fr/monde.rss"
+    },
+
+    "francetvinfo sports": {
+        "rss": "https://www.francetvinfo.fr/sports.rss"
+    },
+
+    "francetvinfo decouverte": {
+        "rss": "https://www.francetvinfo.fr/decouverte.rss"
+    },
+     "francetvinfo culture": {
+        "rss": "https://www.francetvinfo.fr/culture.rss"
+    },
+
+    "francetvinfo-monde": {
+        "link": "https://www.francetvinfo.fr/"
+    },
+    "general": {
+        "link": "http://www.web-soluces.net/flux-rss/annuaire/actualites.php"
     }
-
-
-
-
 }
+
+ fluxRSS.find({"$text": {"$search": search_text}}).limit(10)
+
+    rech = [{
+            "$text": {"$search": textSearch}},
+            {"score": {"$meta": "textScore"}}).sort(
+                {"score": {"$meta": "textScore"}}]
+
+    rch = "{$text: {$search: "Laurent Homophie Tirard"}},
+    {"score": {$meta: "textScore"}}).sort(
+        {score: {$meta: "textScore"}})"
