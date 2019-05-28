@@ -1,6 +1,6 @@
 import datetime
 
-from Python.connexionLocal import *
+from connnexionMongo import *
 
 """
 à partir d'une tendance renseigné recupère tous les documents lui correspondant
