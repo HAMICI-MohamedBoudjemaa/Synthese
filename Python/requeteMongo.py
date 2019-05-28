@@ -1,6 +1,6 @@
 import datetime
 
-from connnexionMongo import *
+from Python.connnexionMongo import *
 
 """
 à partir d'une tendance renseigné recupère tous les documents lui correspondant
@@ -116,9 +116,10 @@ def searchTextInTitleFluxRSS(search_text):
     cursor.sort([('score', {'$meta': 'textScore'})])
     for doc in cursor:
         array.append(doc)
-    if (len(array) == 0):
+    if not array:
         return ''
-    return array[0]['titre']
+    else:
+        return array[0]['titre']
 
 
 
