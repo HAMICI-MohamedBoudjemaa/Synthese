@@ -5,6 +5,7 @@
       <option name="ignoredIdentifiers">
         <list>
           <option value="collectTweets.connnexionMongo" />
+          <option value="geonames.fuzzywuzzy" />
         </list>
       </option>
     </inspection_tool>
