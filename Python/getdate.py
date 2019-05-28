@@ -91,7 +91,7 @@ def getDate(txt):
     for item in date_final:
         Date_count[item] += 1
     Frequency_Date, value_Date = Date_count.popitem()
-    print "the ate most frequency date in tweets " +str(Frequency_Date)+ " number of appearance " +str(value_Date)
+    print ("the ate most frequency date in tweets " +str(Frequency_Date)+ " number of appearance " +str(value_Date))
 
     # Duration
     listeDuree1 = []
@@ -113,7 +113,7 @@ def getDate(txt):
     else:
         Frequency_Duration = ""
         value_Duration = 0
-    print "the ate most frequency durantion in tweets " +str(Frequency_Duration)+ " number of appearance " +str(value_Duration)
+    print ("the ate most frequency durantion in tweets " +str(Frequency_Duration)+ " number of appearance " +str(value_Duration))
 
     if value_Duration >= value_Date:
         Event_Date = str(Frequency_Duration.strftime("%Y-%m-%d %H:%M"))
@@ -133,7 +133,7 @@ if __name__ == '__main__':
     # f = f.read()
     f = "on aura des tests à faire de demain à 12/01/2020 et juste aujourd'hui on aura rien"
     date = getDate(f)
-    print "the date of event in tweet is ",date
+    print ("the date of event in tweet is ",date)
     
     
 
