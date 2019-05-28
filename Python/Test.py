@@ -47,5 +47,7 @@ for trend in trends :
     for a in lTF :
         ltf1 += ' '+a
 
-    print(chooseResult(lfiftgrams, lquadrigrams, ltrigrams, lbigrams, ltf, ltf1))
+    tt = chooseResult(lfiftgrams, lquadrigrams, ltrigrams, lbigrams, ltf, ltf1)
+    print(tt)
+    print(searchTextInTitleFluxRSS(tt))
     print('***************************')

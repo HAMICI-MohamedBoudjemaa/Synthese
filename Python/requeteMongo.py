@@ -116,6 +116,8 @@ def searchTextInTitleFluxRSS(search_text):
     cursor.sort([('score', {'$meta': 'textScore'})])
     for doc in cursor:
         array.append(doc)
+    if (len(array) == 0):
+        return ''
     return array[0]['titre']
 
 
