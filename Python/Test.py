@@ -16,32 +16,36 @@ for trend in trends :
             nbTweets+=1
 
 
-    list5 = fiftgrams(text , nbTweets)
-    print(ntop(list5, 5))
-    print(top(list5))
-    lfiftgrams = top(list5)
+    list = fiftgrams(text , nbTweets)
+    print(ntop(list, 5))
+    print(top(list))
+    lfiftgrams = top(list)
     #setEventDescriptionByTrend(trend, top(list, 1))
 
-    list4 = quadrigrams(text , nbTweets)
-    print(ntop(list4, 5))
-    print(top(list4))
-    lquadrigrams = top(list4)
+    list = quadrigrams(text , nbTweets)
+    print(ntop(list, 5))
+    print(top(list))
+    lquadrigrams = top(list)
 
-    list3 = trigrams(text , nbTweets)
-    print(ntop(list3,5))
-    print(top(list3))
-    ltrigrams = top(list3)
+    list = trigrams(text , nbTweets)
+    print(ntop(list,5))
+    print(top(list))
+    ltrigrams = top(list)
     #setEventDescriptionByTrend(trend,top(list,1))
 
-    list2 = bigrams(text , nbTweets)
-    print(ntop(list2,5))
-    print(top(list2))
-    lbigrams = top(list2)
+    list = bigrams(text , nbTweets)
+    print(ntop(list,5))
+    print(top(list))
+    lbigrams = top(list)
 
-    list1 = TF(text, nbTweets)
-    print(ntop(list1,5))
-    print(top(list1))
-    lTF = top(list1)
+    list = TF(text, nbTweets)
+    print(ntop(list,5))
+    print(top(list))
+    lTF = ntop(list,5)
+    ltf = top(list)
+    ltf1 = ''
+    for a in lTF :
+        ltf1 += ' '+a
 
-    print(chooseResult(lfiftgrams, lquadrigrams, ltrigrams, lbigrams, lTF))
+    print(chooseResult(lfiftgrams, lquadrigrams, ltrigrams, lbigrams, ltf, ltf1))
     print('***************************')

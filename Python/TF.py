@@ -278,7 +278,7 @@ def top(listWords):
 
     return myreturn
 
-def chooseResult(fivegrams, fourgrams, thirdgrams, bigrams,tf):
+def chooseResult(fivegrams, fourgrams, thirdgrams, bigrams,tf, TF):
     coef = 2
     myresult = fivegrams[0]
     if(fivegrams[1]*coef<fourgrams[1]):
@@ -288,7 +288,7 @@ def chooseResult(fivegrams, fourgrams, thirdgrams, bigrams,tf):
     if(thirdgrams[1]*coef<bigrams[1]):
         myresult = bigrams[0]
     if(bigrams[1]*coef<tf[1]):
-        myresult = tf[0]
+        myresult = TF
 
     return myresult
 
