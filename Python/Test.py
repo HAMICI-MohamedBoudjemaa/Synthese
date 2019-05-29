@@ -11,10 +11,11 @@ for trend in trends :
     nbTweets = 0
     for doc in docs:
         i = 0
-        while i <= doc['retweet_count'] :
-            text += (doc['tweet_text'])
-            i+=1
-            nbTweets+=1
+        if (doc['followers'] > 100 and doc['retweet_count']>5) :
+            while i <= doc['retweet_count'] :
+                text += (doc['tweet_text'])
+                i+=1
+                nbTweets+=1
 
 
     list = fiftgrams(text , nbTweets)
@@ -52,6 +53,7 @@ for trend in trends :
     print(tt)
     print(searchTextInTitleFluxRSS(tt))
 
-    date_event = getDate(text)
-    print(date_event)
+    #print(text)
+    date_event = getDate2(docs)
+    print("test" + date_event)
     print('***************************')

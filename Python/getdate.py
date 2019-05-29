@@ -2,21 +2,44 @@
 import datefinder
 import dateparser
 from datetime import datetime
-from datetime import timedelta  
+from datetime import timedelta
+from requeteMongo import *
+
+
+def most_frequent(List):
+    counter = 0
+    if List:
+        num = List[0]
+        for i in List:
+            curr_frequency = List.count(i)
+            if (curr_frequency > counter):
+                counter = curr_frequency
+                num = i
+    if counter == 0:
+        num = ""
+
+    return num, counter
+
 
 def getDate_datefinder(txt):
+    now = datetime.now()
     matches = datefinder.find_dates(txt)
-    list_date=[]
+    list_date = []
     for match in matches:
-        list_date.append(match)
+        # print "date finder", match
+        if match.year <= 2019:
+            list_date.append(datetime(now.year, match.month, match.day))
+        else:
+            list_date.append(match)
     return list_date
 
-def getDate(txt):
+
+def getDate(txt, tweetDate):
     # str to list of word
     f = txt.lower()
     word_list = f.split()
-    
-    #static Day, Month, After, befor
+
+    # static Day, Month, After, befor
     Day = "lundi mardi mercredi jeudi vendredi samedi dimanche"
     Day = Day.split()
 
@@ -32,36 +55,37 @@ def getDate(txt):
     Duree2 = "à jusqu'à au"
     Duree2 = Duree2.split()
 
-    #search day and Month in the txt
-    Day_in_txt=set(word_list).intersection( set(Day) )
-    Month_in_txt=set(word_list).intersection( set(Month) )
+    # search day and Month in the txt
+    Day_in_txt = set(word_list).intersection(set(Day))
+    Month_in_txt = set(word_list).intersection(set(Month))
 
-    #look for the word befor/after the day
-    now = datetime.now()
+    # look for the word befor/after the day
     date_day = []
     date_Month = []
     for item in Day_in_txt:
         if item in word_list[1:]:
-            if word_list[word_list.index(item)-1] in After:
-                date_day.append(now.day + 7)
-            if word_list[word_list.index(item)+1] in After:
-                date_day.append(now.day + 7)
+            if word_list[word_list.index(item) - 1] in After:
+                date_day.append(tweetDate.day + 7)
+            if word_list[word_list.index(item) + 1] in After:
+                date_day.append(tweetDate.day + 7)
     for item in Month_in_txt:
         if item in word_list[1:]:
-            if word_list[word_list.index(item)-1] in After:
-                date_Month.append(now.month +1)
-            if word_list[word_list.index(item)+1] in After:
-                date_Month.append(now.month +1)
-    
-    #collect all dates
+            if word_list[word_list.index(item) - 1] in After:
+                date_Month.append(tweetDate.month + 1)
+            if word_list[word_list.index(item) + 1] in After:
+                date_Month.append(tweetDate.month + 1)
+
+    # collect all dates
     date_final = []
     for item in date_day:
-        date_final.append(datetime(now.year, now.month, item))
+        # print "day", date_day
+        date_final.append(datetime(tweetDate.year, tweetDate.month, item))
     # print "*****************DAY*****************"
     # print date_final
 
     for item in date_Month:
-        date_final.append(datetime(now.year, item, now.day))
+        # print "month", item
+        date_final.append(datetime(tweetDate.year, item, tweetDate.day))
     # print "*****************Month*****************"
     # print date_final
 
@@ -75,66 +99,87 @@ def getDate(txt):
         #     print item
         #     print "date perser", dateparser.parse(item).date()
         if item == "demain":
-            date_final.append(datetime(now.year, now.month, now.day + 1))
+            date_final.append(datetime(tweetDate.year, tweetDate.month, tweetDate.day + 1))
         elif item == "aujourd'hui":
-            date_final.append(datetime(now.year, now.month, now.day))
+            date_final.append(datetime(tweetDate.year, tweetDate.month, tweetDate.day))
         elif item == "hier":
-            date_final.append(datetime(now.year, now.month, now.day - 1))
+            date_final.append(datetime(tweetDate.year, tweetDate.month, tweetDate.day - 1))
 
     # Remove old date
     # for item in date_final:
-    #     if item < now:
+    #     if item < tweetDate:
     #         date_final.remove(item)
-
-    # get date most frequency         
-    Date_count = {}.fromkeys(set(date_final),0)
+    date_format = []
     for item in date_final:
-        Date_count[item] += 1
-    Frequency_Date, value_Date = Date_count.popitem()
-    print ("the ate most frequency date in tweets " +str(Frequency_Date)+ " number of appearance " +str(value_Date))
+        date_format.append(item.strftime("%Y-%m-%d %H:%M"))
+        print("date final", item)
+
+    # get date most frequency
+    # Date_count = {}.fromkeys(set(date_format),0)
+    # for item in date_format:
+    #     Date_count[item] += 1
+    # Frequency_Date, value_Date = Date_count.popitem()
+    # print "the ate most frequency date in tweets ", Frequency_Date
+    # print " number of appearance ", value_Date
+    Frequency_Date, counter = most_frequent(date_format)
+    print("nost frequent date", Frequency_Date)
+    print(" number of appearance ", counter)
 
     # Duration
     listeDuree1 = []
     listeDuree2 = []
     for item in Duree1:
         if item in word_list[1:]:
-            if dateparser.parse(word_list[word_list.index(item)+1]):
-                if word_list[word_list.index(item)+2] in Duree2:
-                    listeDuree1.append(dateparser.parse(word_list[word_list.index(item)+1]))
-                    listeDuree2.append(dateparser.parse(word_list[word_list.index(item)+3]))
+            if dateparser.parse(word_list[word_list.index(item) + 1]):
+                if word_list[word_list.index(item) + 2] in Duree2:
+                    listeDuree1.append(dateparser.parse(word_list[word_list.index(item) + 1]))
+                    listeDuree2.append(dateparser.parse(word_list[word_list.index(item) + 3]))
 
     # compare duration and date
-    Duration_count = {}.fromkeys(set(listeDuree1),0)
-    for item in listeDuree1:
-        Duration_count[item] += 1
-    # check if dictionary not empty
-    if bool(Duration_count):
-        Frequency_Duration, value_Duration = Duration_count.popitem()
-    else:
-        Frequency_Duration = ""
-        value_Duration = 0
-    print ("the ate most frequency durantion in tweets " +str(Frequency_Duration)+ " number of appearance " +str(value_Duration))
+    Frequency_Duration, value_Duration = most_frequent(listeDuree1)
 
-    if value_Duration >= value_Date:
+    print("the ate most frequency durantion in tweets " + str(Frequency_Duration) + " number of appearance " + str(
+        value_Duration))
+
+    if value_Duration >= counter:
         Event_Date = str(Frequency_Duration.strftime("%Y-%m-%d %H:%M"))
         index = listeDuree1.index(Frequency_Duration)
         Event_Date += " à "
-        Event_Date += str(listeDuree2[0].strftime("%Y-%m-%d %H:%M"))
+        Event_Date += str(listeDuree2[index].strftime("%Y-%m-%d %H:%M"))
+        duration_bool = True
     else:
-        Event_Date = Frequency_Date.strftime("%Y-%m-%d %H:%M")
+        Event_Date = Frequency_Date
+        duration_bool = False
+
+    return Event_Date, duration_bool
 
 
-    return Event_Date
+def getDate2(docs):
+    tweetDate = []
+    tweetDuration = []
+    for doc in docs:
+        tweet_date, duration = getDate(doc['tweet_text'], doc['created'])
+        if duration:
+            tweetDate.append(tweet_date)
+        else:
+            tweetDuration.append(tweet_date)
+    Frequency_Date, counter_date = most_frequent(tweetDate)
+    Frequency_Duration, counter_duration = most_frequent(tweetDuration)
+    if counter_duration >= counter_date:
+        return Frequency_Duration
+    else:
+        return Frequency_Date
+
 
 if __name__ == '__main__':
-
-    # f = open(r"tweets/#19hRuthElkrief.txt","r")
-    
+    # f = open(r"tweets/#AvecBardella.txt","r")
     # f = f.read()
-    f = "on aura des tests à faire de demain à 12/01/2020 et juste aujourd'hui on aura rien"
-    date = getDate(f)
-    print ("the date of event in tweet is ",date)
-    
-    
+
+    # f = "on aura des tests à faire de demain à 12/01/2020 et juste aujourd'hui on aura rien"
+    # date = getDate(f, now)
+    # print "the date of event in tweet is ",date
+    print(getAllTrend())
+
+
 
 
