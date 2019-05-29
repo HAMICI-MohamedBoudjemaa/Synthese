@@ -153,6 +153,7 @@ if __name__ == '__main__':
 
     f = open(r"tweets/#AvecBardella.txt","r")
     f = f.read()
+    
     # f = "on aura des tests à faire de demain à 12/01/2020 et juste aujourd'hui on aura rien"
     date = getDate(f)
     print "the date of event in tweet is ",date
