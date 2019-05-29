@@ -50,7 +50,7 @@ trend : tendence
 description : la description
 """
 def setEventDescriptionByTrend(trend, description):
-    update = events.update({'id':trend}, {'$set':{'description':description}})
+    update = events.update({'id':trend}, {'$set':{'description':description, 'status':True}})
     return update
 """
 Ajoute le lieu à chaque doc de la collection events
@@ -71,6 +71,7 @@ def setEventDateByTrend(trend, date):
     update = events.update({'id':trend}, {'$set':{'date':date}})
     return update
 
+
 """
 Mets à jours les champs vide de la collection events(description, lieu, date, status)
 """
@@ -79,8 +80,52 @@ def setFieldEventByTrend(trend, description, lieu, date):
     update = events.update({'id': trend}, {'$set': {'description': description, 'lieu':lieu, 'date':date, 'status':True}})
     return update
 
+"""
+retourne le nombre de tweets, nombre retweets,  nombre utilisateur et la date du premier tweet d'une tendance données
+"""
+def getCountElementTrend(trend):
+    rt = [{"$match": {"tendance": trend}},
+          {"$group": {"_id": "$tendance",
+                      "date_premier_tweet": { "$min": "$created"},
+                      "nombre_retweet": {"$sum": "$retweet_count"},
+                      "nb_user": {"$sum": 1}
+                     }
+          }
+         ]
 
-#Structure champs collection tweets
+
+    cursor = tweets.aggregate(rt)
+    result = list(cursor)
+    rs = {"nb_tw": getTweetByTrend(trend).count(),
+          "nb_rt":result[0]['nombre_retweet'],
+          "nb_user":result[0]['nb_user'],
+          "date_premier_tweet":result[0]['date_premier_tweet']}
+
+    return rs
+
+"""
+Recherche un text dans le Titre du flux RSS, trie par ordre score
+et retourne le titre ayant le plus grand score
+"""
+def searchTextInTitleFluxRSS(search_text):
+    array = []
+    cursor = fluxRSS.find(
+        {'$text': {'$search': search_text}},
+        {'score': {'$meta': 'textScore'}})
+    # Sort by 'score' field.
+    cursor.sort([('score', {'$meta': 'textScore'})])
+    for doc in cursor:
+        array.append(doc)
+    if not array:
+        return ''
+    else:
+        return array[0]['titre']
+
+
+
+
+
+    #Structure champs collection tweets
 """"
     "tendance" 
     "tweet_id" 
