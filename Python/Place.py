@@ -6,9 +6,9 @@ class Place:
         self._ofCity = None
         self._ofCountry = None
 
-    def __str__(self):
-        result = '[' + 'name: ' + self.name + ' type: ' + self.type + ' country: ' + self.ofCountry + ']'
-        return result
+    #def __str__(self):
+    #   result = '[' + 'name: ' + self.name + ' type: ' + self.type + ' country: ' + self.ofCountry + ']'
+    #   return result
 
     @property
     def name(self):
