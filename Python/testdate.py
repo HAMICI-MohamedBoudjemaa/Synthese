@@ -3,6 +3,8 @@ import datefinder
 import dateparser
 from datetime import datetime
 from datetime import timedelta  
+from requeteMongo import *
+
 
 def getDate_datefinder(txt):
     matches = datefinder.find_dates(txt)
@@ -26,11 +28,11 @@ def getDate(txt):
     After = "suivant prochain suivante prochaine"
     After = After.split()
 
-    Duree1 = "de "
-    Duree1 = After.split()
+    Duree1 = "de partir"
+    Duree1 = Duree1.split()
 
-    Duree2 = "à"
-    Duree2 = After.split()
+    Duree2 = "à jusqu'à au"
+    Duree2 = Duree2.split()
 
     #search day and Month in the txt
     Day_in_txt=set(word_list).intersection( set(Day) )
@@ -69,20 +71,29 @@ def getDate(txt):
     # print "*****************date finder*****************"
     # print date_final
 
-    # for date_string in word_list:
-    #     if dateparser.parse(date_string):
-    #         print date_string
-    #         date_final.append(dateparser.parse(date_string).date())
-    # print "*****************date parser*****************"
-    # print date_final
+    for item in word_list:
+        # if dateparser.parse(item):
+        #     date_final.append(dateparser.parse(item).date())
+        #     print item
+        #     print "date perser", dateparser.parse(item).date()
+        if item == "demain":
+            date_final.append(datetime(now.year, now.month, now.day + 1))
+        elif item == "aujourd'hui":
+            date_final.append(datetime(now.year, now.month, now.day))
+        elif item == "hier":
+            date_final.append(datetime(now.year, now.month, now.day - 1))
 
     # Remove old date
     # for item in date_final:
     #     if item < now:
     #         date_final.remove(item)
 
-    # Remove duplicates in the list
-    list(set(date_final))
+    # get date most frequency         
+    Date_count = {}.fromkeys(set(date_final),0)
+    for item in date_final:
+        Date_count[item] += 1
+    Frequency_Date, value_Date = Date_count.popitem()
+    print "the ate most frequency date in tweets " +str(Frequency_Date)+ " number of appearance " +str(value_Date)
 
     # Duration
     listeDuree1 = []
@@ -93,49 +104,50 @@ def getDate(txt):
                 if word_list[word_list.index(item)+2] in Duree2:
                     listeDuree1.append(dateparser.parse(word_list[word_list.index(item)+1]))
                     listeDuree2.append(dateparser.parse(word_list[word_list.index(item)+3]))
-                
+
+    # compare duration and date
+    Duration_count = {}.fromkeys(set(listeDuree1),0)
+    for item in listeDuree1:
+        Duration_count[item] += 1
+    # check if dictionary not empty
+    if bool(Duration_count):
+        Frequency_Duration, value_Duration = Duration_count.popitem()
+    else:
+        Frequency_Duration = ""
+        value_Duration = 0
+    print "the ate most frequency durantion in tweets " +str(Frequency_Duration)+ " number of appearance " +str(value_Duration)
+
+    if value_Duration >= value_Date:
+        Event_Date = str(Frequency_Duration.strftime("%Y-%m-%d %H:%M"))
+        index = listeDuree1.index(Frequency_Duration)
+        Event_Date += " à "
+        Event_Date += str(listeDuree2[0].strftime("%Y-%m-%d %H:%M"))
+    else:
+        Event_Date = Frequency_Date.strftime("%Y-%m-%d %H:%M")
 
 
-    return date_final
-
-if __name__ == '__main__':
-
-    # f = open(r"tweets/#19hRuthElkrief.txt","r")
-    # f = f.read()
-    # date = getDate(f)
-    # print date[7]
-    date_string = "vo/co/cccc"
-    # if dateparser.parse(date_string):
-    #     print date_string
-    # else:
-    #     print "walo"
-    # txt = "lahcen ait bella mcha yl3ab w de zfzf à 09/09/2019 jeudi daro katfo idan howa kasoul jibad"
-    # f = txt.lower()
-    # word_list = f.split()
-    # Day = "lundi mardi mercredi jeudi vendredi samedi dimanche"
-    # Day = Day.split()
-    # Day_in_txt=set(word_list).intersection( set(Day) )
-    # now = datetime.now()
-    # Duree1 = "de "
-    # Duree1 = Duree1.split()
-
-    # Duree2 = "à"
-    # Duree2 = Duree2.split()
-
-    # for item in Duree1:
-    #     if item in word_list[1:]:
-    #         if dateparser.parse(word_list[word_list.index(item)+1]):
-    #             if word_list[word_list.index(item)+2] in Duree2:
-
-    liste = [2,65,42,53,27,2,42,27,2,53,53,53,65,21,27,53,2,53,65,27]
-    compte = {}.fromkeys(set(liste),0)
-    for valeur in liste:
-        compte[valeur] += 1
-    key, value = compte.popitem()
-
-    print(key)
-                    
-    
-    
+    return Event_Date
 
 
+
+
+trends = getAllTrend()
+
+for trend in trends :
+    print(trend)
+    docs = getTweetByTrend(trend)
+    text = ''
+    nbTweets = 0
+    for doc in docs:
+        i = 0
+        while i <= doc['retweet_count'] :
+            text += (doc['tweet_text'])
+            i+=1
+            nbTweets+=1
+
+
+    date_event = getDate(text)
+    print(date_event)
+
+    print()
+    print('***************************')
