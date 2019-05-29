@@ -1,47 +1,59 @@
 from TF import *
 from requeteMongo import *
+from getdate import *
 
-trends = getAllTrendIfStatusIsFalse()
+trends = getAllTrend()
 
 for trend in trends :
     print(trend)
     docs = getTweetByTrend(trend)
     text = ''
+    nbTweets = 0
     for doc in docs:
         i = 0
-        while i < doc['retweet_count'] :
-            text += (doc['tweet_text'])
-            i+=1
+        if (doc['followers'] > 100 and doc['retweet_count']>5) :
+            while i <= doc['retweet_count'] :
+                text += (doc['tweet_text'])
+                i+=1
+                nbTweets+=1
 
 
-    list = ninegrams(text)
-    print(top(list, 5))
-
-    list = eightgrams(text)
-    print(top(list, 5))
-
-    list = sevengrams(text)
-    print(top(list, 5))
+    list = fiftgrams(text , nbTweets)
+    #print(ntop(list, 5))
+    #print(top(list))
+    lfiftgrams = top(list)
     #setEventDescriptionByTrend(trend, top(list, 1))
 
-    list = sixgrams(text)
-    print(top(list, 5))
-    #setEventDescriptionByTrend(trend, top(list, 1))
+    list = quadrigrams(text , nbTweets)
+    #print(ntop(list, 5))
+    #print(top(list))
+    lquadrigrams = top(list)
 
-    list = fiftgrams(text)
-    print(top(list, 5))
-    setEventDescriptionByTrend(trend, top(list, 1))
-
-    list = quadrigrams(text)
-    print(top(list, 5))
-
-    list = trigrams(text)
-    print(top(list,5))
+    list = trigrams(text , nbTweets)
+    #print(ntop(list,5))
+    #print(top(list))
+    ltrigrams = top(list)
     #setEventDescriptionByTrend(trend,top(list,1))
 
-    list = bigrams(text)
-    print(top(list,5))
+    list = bigrams(text , nbTweets)
+    #print(ntop(list,5))
+    #print(top(list))
+    lbigrams = top(list)
 
-    list = TF(text)
-    print(top(list,5))
+    list = TF(text, nbTweets)
+    #print(ntop(list,5))
+    #print(top(list))
+    lTF = ntop(list,5)
+    ltf = top(list)
+    ltf1 = ''
+    for a in lTF :
+        ltf1 += ' '+a
+
+    tt = chooseResult(lfiftgrams, lquadrigrams, ltrigrams, lbigrams, ltf, ltf1)
+    print(tt)
+    print(searchTextInTitleFluxRSS(tt))
+
+    #print(text)
+    date_event = getDate2(docs)
+    print("test" + date_event)
     print('***************************')

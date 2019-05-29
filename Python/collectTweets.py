@@ -4,7 +4,7 @@ import tweepy
 from retrying import retry
 from tweepy import OAuthHandler
 
-from Python.connnexionMongo import tweets, events
+from Python.connnexionMongo import *
 from Python.functionUtile import clean_text
 from Python.gestion_logging import log_message
 

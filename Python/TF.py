@@ -13,7 +13,7 @@ def deleteStopWords(words) :
     for word in words :
         if word not in stopWords:
             tmp.append(word)
-    tmp = [word for word in tmp if word.isalpha()]
+    tmp = [word for word in tmp if (word.isalpha() or word.isnumeric())]
     return tmp
 
 def lower(words):
@@ -44,16 +44,16 @@ def countEachWord(text):
             listWords[word]=1
     return listWords
 
-def TF(text):
+def TF(text, nbTweets):
     nb = nbWords(text)
     listWords = countEachWord(text)
     for word in listWords :
-        listWords[word]=listWords[word]/nb
+        listWords[word]=listWords[word]/nbTweets
     print("This is TF")
     return listWords
 
 
-def bigrams(text):
+def bigrams(text, nbTweets):
     words = word_tokenize(text)
     words = lower(words)
     words = deleteStopWords(words)
@@ -71,12 +71,12 @@ def bigrams(text):
             listWords[word]=1
 
     for word in listWords :
-        listWords[word]=listWords[word]/i
+        listWords[word]=listWords[word]/nbTweets
 
     print("This is bi-grams")
     return  listWords
 
-def trigrams(text):
+def trigrams(text, nbTweets):
     words = word_tokenize(text)
     words = lower(words)
     words = deleteStopWords(words)
@@ -94,12 +94,12 @@ def trigrams(text):
             listWords[word]=1
 
     for word in listWords :
-        listWords[word]=listWords[word]/i
+        listWords[word]=listWords[word]/nbTweets
     print("This is tri-grams")
     return  listWords
 
 
-def quadrigrams(text):
+def quadrigrams(text, nbTweets):
     words = word_tokenize(text)
     words = lower(words)
     words = deleteStopWords(words)
@@ -117,11 +117,11 @@ def quadrigrams(text):
             listWords[word]=1
 
     for word in listWords :
-        listWords[word]=listWords[word]/i
+        listWords[word]=listWords[word]/nbTweets
     print("This is quadri-grams")
     return  listWords
 
-def fiftgrams(text):
+def fiftgrams(text, nbTweets):
     words = word_tokenize(text)
     words = lower(words)
     words = deleteStopWords(words)
@@ -139,12 +139,12 @@ def fiftgrams(text):
             listWords[word]=1
 
     for word in listWords :
-        listWords[word]=listWords[word]/i
+        listWords[word]=listWords[word]/nbTweets
     print("This is fift-grams")
     return  listWords
 
 
-def sixgrams(text):
+def sixgrams(text, nbTweets):
     words = word_tokenize(text)
     words = lower(words)
     words = deleteStopWords(words)
@@ -162,15 +162,16 @@ def sixgrams(text):
             listWords[word]=1
 
     for word in listWords :
-        listWords[word]=listWords[word]/i
+        listWords[word]=listWords[word]/nbTweets
     print("This is six-grams")
     return  listWords
 
 
-def sevengrams(text):
+def sevengrams(text, nbTweets):
     words = word_tokenize(text)
     words = lower(words)
     words = deleteStopWords(words)
+    print(len(words))
     i=0
     triwords = []
     listWords = {}
@@ -185,11 +186,11 @@ def sevengrams(text):
             listWords[word]=1
 
     for word in listWords :
-        listWords[word]=listWords[word]/i
+        listWords[word]=listWords[word]/nbTweets
     print("This is seven-grams")
     return  listWords
 
-def eightgrams(text):
+def eightgrams(text, nbTweets):
     words = word_tokenize(text)
     words = lower(words)
     words = deleteStopWords(words)
@@ -207,11 +208,11 @@ def eightgrams(text):
             listWords[word]=1
 
     for word in listWords :
-        listWords[word]=listWords[word]/i
+        listWords[word]=listWords[word]/nbTweets
     print("This is eight-grams")
     return  listWords
 
-def ninegrams(text):
+def ninegrams(text, nbTweets):
     words = word_tokenize(text)
     words = lower(words)
     words = deleteStopWords(words)
@@ -229,11 +230,11 @@ def ninegrams(text):
             listWords[word]=1
 
     for word in listWords :
-        listWords[word]=listWords[word]/i
+        listWords[word]=listWords[word]/nbTweets
     print("This is nine-grams")
     return  listWords
 
-def top(listWords,n):
+def ntop(listWords,n):
     listWordsMax = []
     max = []
     i=0
@@ -244,14 +245,52 @@ def top(listWords,n):
 
 
     for word in listWords :
-        i = n - 1;
-        while i>=0 :
-            if listWords[word]>max[i]:
-                max[i]=listWords[word]
-                listWordsMax[i]=word
-                break
-            i-=1
+        if listWords[word]>0.2 :
+            i = n - 1;
+            while i>=0 :
+                if listWords[word]>max[i]:
+                    j = 0
+                    while j<i:
+                        max[j] = max[j+1]
+                        listWordsMax[j]=listWordsMax[j+1]
+                        j+=1
+                    max[i]=listWords[word]
+                    listWordsMax[i]=word
+                    break
+                i-=1
     return listWordsMax
+
+
+def top(listWords):
+    wordMax = ''
+    max = 0
+    i=0
+
+    for word in listWords :
+        if listWords[word]>0.2 :
+            if listWords[word]>max:
+                max=listWords[word]
+                wordMax=word
+                i-=1
+    myreturn = []
+    myreturn.append(wordMax)
+    myreturn.append(max)
+
+    return myreturn
+
+def chooseResult(fivegrams, fourgrams, thirdgrams, bigrams,tf, TF):
+    coef = 2
+    myresult = fivegrams[0]
+    if(fivegrams[1]*coef<fourgrams[1]):
+        myresult = fourgrams[0]
+    if(fourgrams[1]*coef<thirdgrams[1]):
+        myresult = thirdgrams[0]
+    if(thirdgrams[1]*coef<bigrams[1]):
+        myresult = bigrams[0]
+    if(bigrams[1]*coef<tf[1]):
+        myresult = TF
+
+    return myresult
 
 
 
