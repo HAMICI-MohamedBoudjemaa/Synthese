@@ -6,11 +6,26 @@ from stop_words import get_stop_words
 from nltk.stem.porter import PorterStemmer
 from gensim import corpora, models
 import gensim
+from requeteMongo import getTweetByTrend
+from requeteMongo import getAllTrend
+from spellchecker import SpellChecker
+import re
+
+def getWords(text):
+    return re.compile('\w+').findall(text)
+
+spell = SpellChecker('fr')
+doc_set = []
+for doc in getTweetByTrend('#17mai'):
+    tweet = (doc['tweet_text'])
+    doc_set.append (tweet)
+
+print(doc_set)
 
 tokenizer = RegexpTokenizer(r'\w+')
 
 # create English stop words list
-en_stop = get_stop_words('en')
+en_stop = get_stop_words('fr')
 
 # Create p_stemmer of class PorterStemmer
 p_stemmer = PorterStemmer()
@@ -23,7 +38,7 @@ doc_d = "I often feel pressure to perform well at school, but my mother never se
 doc_e = "Health professionals say that brocolli is good for your health."
 
 # compile sample documents into a list
-doc_set = [doc_a, doc_b, doc_c, doc_d, doc_e]
+#doc_set = [doc_a, doc_b, doc_c, doc_d, doc_e]
 
 # list for tokenized documents in loop
 texts = []
@@ -38,11 +53,11 @@ for i in doc_set:
     stopped_tokens = [i for i in tokens if not i in en_stop]
 
     # stem tokens
-    stemmed_tokens = [p_stemmer.stem(i) for i in stopped_tokens]
+    #stemmed_tokens = [p_stemmer.stem(i) for i in stopped_tokens]
 
     # add tokens to list
 
-    texts.append(stemmed_tokens)
+    texts.append(stopped_tokens)
 
 # turn our tokenized documents into a id <-> term dictionary
 dictionary = corpora.Dictionary(texts)
