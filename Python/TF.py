@@ -3,6 +3,28 @@ import re
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, sent_tokenize
 import math
+import textdistance
+
+from spellchecker import SpellChecker
+
+spell = SpellChecker(language = 'fr')
+
+def selectRepresentativeTweet(result, docs):
+    max = 0
+    representativeTweet = ''
+    for doc in docs:
+        distance = textdistance.jaccard(result, doc['tweet_text'])
+        if distance>max and percentageBadOrthograph(doc['tweet_text'])<0.3:
+            max = distance
+            representativeTweet = doc['tweet_text']
+    return representativeTweet
+
+def percentageBadOrthograph(text):
+    words = word_tokenize(text)
+    misspelled = spell.unknown(words)
+    # print(misspelled)
+    count_misspeled = len(misspelled)
+    return count_misspeled/nbWords(text)
 
 def deleteStopWords(words) :
     stopWords = set(stopwords.words('french'))
@@ -292,6 +314,23 @@ def chooseResult(fivegrams, fourgrams, thirdgrams, bigrams,tf, TF):
 
     return myresult
 
+def chooseResult1(sevengrams, sixgrams, fivegrams, fourgrams, thirdgrams, bigrams,tf, TF):
+    coef = 2
+    myresult = sevengrams[0]
+    if (sevengrams[1] * coef < sixgrams[1]):
+        myresult = sixgrams[0]
+    if (sixgrams[1] * coef < fivegrams[1]):
+        myresult = fivegrams[0]
+    if(fivegrams[1]*coef<fourgrams[1]):
+        myresult = fourgrams[0]
+    if(fourgrams[1]*coef<thirdgrams[1]):
+        myresult = thirdgrams[0]
+    if(thirdgrams[1]*coef<bigrams[1]):
+        myresult = bigrams[0]
+    if(bigrams[1]*coef<tf[1]):
+        myresult = TF
+
+    return myresult
 
 
 
