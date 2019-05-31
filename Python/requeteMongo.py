@@ -174,6 +174,3 @@ def findIfEventExist(trend):
     date
     status
 """
-if __name__ == '__main__':
-    print(searchTextInTitleFluxRSS("Cannes 2019 : Une Palme d'or honorifique pour Alain Delon"))
-    print(findIfTweetIdExist("1129374300681723904"))
