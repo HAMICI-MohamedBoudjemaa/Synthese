@@ -11,6 +11,8 @@ for trend in trends :
     docs1 = getTweetByTrend(trend)
     text = ''
     nbTweets = 0
+    date_event = getDate2(docs)
+
     for doc in docs:
         i = 0
         if (doc['followers'] > 100000 and doc['retweet_count']>5 and percentageBadOrthograph(doc['tweet_text'])<0.3) :
@@ -58,6 +60,5 @@ for trend in trends :
     print('tweet representatif : '+representativeTweet)
 
     #print(text)
-    date_event = getDate2(docs1)
-    print("Date : " + date_event)
+    print("date event " + date_event)
     print('***************************')
