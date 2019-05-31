@@ -135,7 +135,6 @@ def getDate(tweet, tweetDate):
         duration_bool = False
         Event_Date = ""
 
-
     return Event_Date, duration_bool
 
 
@@ -162,10 +161,5 @@ def getDate2(docs):
         return Frequency_Date
     else:
         return "We can not get a date for this trend"
-
-
-
-
-
 
 

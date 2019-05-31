@@ -3,6 +3,108 @@ import re
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, sent_tokenize
 import math
+import textdistance
+
+from spellchecker import SpellChecker
+
+spell = SpellChecker(language = 'fr')
+TRESHOLD_APPEARENCE = 0.2
+
+
+def deleteDuplicates(text):
+    # Seperate out each word
+    words = text.split(" ")
+
+    # Convert all words to lowercase
+    words = lower(words)
+    print(words)
+
+    # Sort the words in order
+    words.sort()
+    unique = []
+    total_words = len(words)
+    i = 0
+
+    while i < (total_words - 1):
+        if words[i] != words[i + 1]:
+            unique += ' ' + words[i]
+        i += 1
+
+    return unique
+def deleteSubstr(listKeywords = {}):
+    i=0
+    listKeywords1=listKeywords.copy()
+    for w in list(listKeywords):
+        for w1 in list(listKeywords1):
+            if (w1 in w) and w!=w1:
+                del listKeywords[w1]
+                del listKeywords1[w1]
+    return listKeywords
+
+
+def createListKeywords(text, nbTweets):
+    list = fiftgrams(text , nbTweets)
+    #print(ntop(list, 5))
+    #print(top(list))
+    lFIFTGRAMS = ntop(list, 5)
+    lfiftgrams = top(list)
+
+    list = quadrigrams(text , nbTweets)
+    #print(ntop(list, 5))
+    #print(top(list))
+    lQUADRIGRAMS = ntop(list, 5)
+    lquadrigrams = top(list)
+
+    list = trigrams(text , nbTweets)
+    #print(ntop(list,5))
+    #print(top(list))
+    lTRIGRAMS = ntop(list, 5)
+    ltrigrams = top(list)
+
+    list = bigrams(text , nbTweets)
+    #print(ntop(list,5))
+    #print(top(list))
+    lBIGRAMS = ntop(list, 5)
+    lbigrams = top(list)
+
+    list = TF(text, nbTweets)
+    #print(ntop(list,5))
+    #print(top(list))
+    lTF = ntop(list,5)
+    ltf = top(list)
+
+    mylist = []
+    for i in lFIFTGRAMS:
+        mylist.append([i, lFIFTGRAMS[i]])
+    for i in lQUADRIGRAMS:
+        mylist.append([i, lQUADRIGRAMS[i]])
+    for i in lTRIGRAMS:
+        mylist.append([i, lTRIGRAMS[i]])
+    for i in lBIGRAMS:
+        mylist.append([i, lBIGRAMS[i]])
+    for i in lTF:
+        mylist.append([i, lTF[i]])
+
+    return mylist
+
+def selectRepresentativeTweet(result, docs):
+    max = 0
+    representativeTweet = ''
+    for doc in docs:
+        distance = textdistance.jaccard(result, doc['tweet_text'])
+        if distance>max and percentageBadOrthograph(doc['tweet_text'])<0.3:
+            max = distance
+            representativeTweet = doc['tweet_text']
+    return representativeTweet
+
+def percentageBadOrthograph(text):
+    words = word_tokenize(text)
+    misspelled = spell.unknown(words)
+    # print(misspelled)
+    count_misspeled = len(misspelled)
+    if(nbWords(text)==0):
+        return 1
+    return count_misspeled/nbWords(text)
 
 def deleteStopWords(words) :
     stopWords = set(stopwords.words('french'))
@@ -245,7 +347,7 @@ def ntop(listWords,n):
 
 
     for word in listWords :
-        if listWords[word]>0.2 :
+        if listWords[word]>TRESHOLD_APPEARENCE :
             i = n - 1;
             while i>=0 :
                 if listWords[word]>max[i]:
@@ -258,7 +360,13 @@ def ntop(listWords,n):
                     listWordsMax[i]=word
                     break
                 i-=1
-    return listWordsMax
+
+    mylist = {}
+    i=0
+    while i < len(listWordsMax):
+        mylist[listWordsMax[i]]=max[i]
+        i+=1
+    return mylist
 
 
 def top(listWords):
@@ -267,7 +375,7 @@ def top(listWords):
     i=0
 
     for word in listWords :
-        if listWords[word]>0.2 :
+        if listWords[word]>TRESHOLD_APPEARENCE :
             if listWords[word]>max:
                 max=listWords[word]
                 wordMax=word
@@ -278,7 +386,7 @@ def top(listWords):
 
     return myreturn
 
-def chooseResult(fivegrams, fourgrams, thirdgrams, bigrams,tf, TF):
+def chooseResult1(fivegrams, fourgrams, thirdgrams, bigrams,tf, TF):
     coef = 2
     myresult = fivegrams[0]
     if(fivegrams[1]*coef<fourgrams[1]):
@@ -292,7 +400,44 @@ def chooseResult(fivegrams, fourgrams, thirdgrams, bigrams,tf, TF):
 
     return myresult
 
+def chooseResult(listKeywords,n):
+    listWordsMax = []
+    max = []
+    i = 0
+    while i < n:
+        max.append(0)
+        listWordsMax.append('')
+        i += 1
 
+    for w in listKeywords:
+        if w[1] > TRESHOLD_APPEARENCE:
+            i = n - 1;
+            while i >= 0:
+                if w[1] > max[i]:
+                    j = 0
+                    while j < i:
+                        max[j] = max[j + 1]
+                        listWordsMax[j] = listWordsMax[j + 1]
+                        j += 1
+                    max[i] = w[1]
+                    listWordsMax[i] = w[0]
+                    break
+                i -= 1
+
+    mylist = {}
+    i = 0
+    while i < len(listWordsMax):
+        mylist[listWordsMax[i]] = max[i]
+        i += 1
+    return mylist
+
+
+def createResultText(mylist):
+    text = ''
+    for i in mylist:
+        text += ' '+i
+
+    return text
 
 
 #file = open('./tweets/#19hRuthElkrief.txt','r',encoding='utf-8')
