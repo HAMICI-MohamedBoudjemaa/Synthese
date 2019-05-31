@@ -165,9 +165,3 @@ def getDate2(docs):
         return Frequency_Date
     else:
         return "We can not get a date for this trend"
-
-
-
-
-
-

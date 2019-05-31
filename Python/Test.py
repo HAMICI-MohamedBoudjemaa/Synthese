@@ -9,9 +9,9 @@ for trend in trends :
     print(trend)
     docs = getTweetByTrend(trend)
     docs1 = getTweetByTrend(trend)
+    docs2 = getTweetByTrend(trend)
     text = ''
     nbTweets = 0
-    date_event = getDate2(docs)
 
     for doc in docs:
         i = 0
@@ -21,44 +21,23 @@ for trend in trends :
                 i+=1
                 nbTweets+=1
 
+    #find keywords
+    listKeywords = createListKeywords(text,nbTweets)
+    result = chooseResult(listKeywords,5)
+    print('del')
+    result = deleteSubstr(result)
+    result = createResultText(result)
+    print(result)
 
-    list = fiftgrams(text , nbTweets)
-    #print(ntop(list, 5))
-    #print(top(list))
-    lfiftgrams = top(list)
-    #setEventDescriptionByTrend(trend, top(list, 1))
-
-    list = quadrigrams(text , nbTweets)
-    #print(ntop(list, 5))
-    #print(top(list))
-    lquadrigrams = top(list)
-
-    list = trigrams(text , nbTweets)
-    #print(ntop(list,5))
-    #print(top(list))
-    ltrigrams = top(list)
-    #setEventDescriptionByTrend(trend,top(list,1))
-
-    list = bigrams(text , nbTweets)
-    #print(ntop(list,5))
-    #print(top(list))
-    lbigrams = top(list)
-
-    list = TF(text, nbTweets)
-    #print(ntop(list,5))
-    #print(top(list))
-    lTF = ntop(list,5)
-    ltf = top(list)
-    ltf1 = ''
-    for a in lTF :
-        ltf1 += ' '+a
-
-    result = chooseResult(lfiftgrams, lquadrigrams, ltrigrams, lbigrams, ltf, ltf1)
-    print('resultat mots clés : ' + result)
+    #find rss article
     print('resultat flux rss : ' + searchTextInTitleFluxRSS(result))
+
+    #find representative tweet
     representativeTweet = selectRepresentativeTweet(result, docs1)
     print('tweet representatif : '+representativeTweet)
+    #setEventDescriptionByTrend(trend, top(list, 1))
 
     #print(text)
-    print("date event " + date_event)
+    #date_event = getDate2(docs2)
+    #print("date event " + date_event)
     print('***************************')
