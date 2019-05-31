@@ -44,7 +44,7 @@ def getElementTweet(trend):
     #-filter:retweets : supprimer les retweets
     #new_search = trend + '-filter:retweets',
     data_array = []
-    for page in tweepy.Cursor(api.search, q=trend + ' -filter:retweets', count=15, tweet_mode='extended',lang="fr").pages(1):
+    for page in tweepy.Cursor(api.search, q=trend + ' -filter:retweets', count=100, tweet_mode='extended',lang="fr").pages(10):
         for res in page:
             json_str = json.dumps(res._json)
             data_json = json.loads(json_str)
