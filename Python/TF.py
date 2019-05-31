@@ -7,9 +7,30 @@ import textdistance
 
 from spellchecker import SpellChecker
 
+from requeteMongo import searchTextInTitleFluxRSS
+
 spell = SpellChecker(language = 'fr')
 TRESHOLD_APPEARENCE = 0.2
 
+
+def tweetDescription(text, nbTweets, docs1):
+    # find keywords
+    listKeywords = createListKeywords(text, nbTweets)
+    result = chooseResult(listKeywords, 10)
+    result = deleteSubstr(result)
+    result = createResultText(result)
+    result = deleteDuplicates(result)
+    print(result)
+
+    # find rss article
+    print('resultat flux rss : ' + searchTextInTitleFluxRSS(result))
+
+    # find representative tweet
+    representativeTweet = selectRepresentativeTweet(result, docs1)
+    print('tweet representatif : ' + representativeTweet)
+    # setEventDescriptionByTrend(trend, top(list, 1))
+
+    print('***************************')
 
 def deleteDuplicates(text):
     # Seperate out each word
@@ -17,11 +38,10 @@ def deleteDuplicates(text):
 
     # Convert all words to lowercase
     words = lower(words)
-    print(words)
 
     # Sort the words in order
     words.sort()
-    unique = []
+    unique = ''
     total_words = len(words)
     i = 0
 

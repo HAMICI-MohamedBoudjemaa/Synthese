@@ -1,6 +1,6 @@
 import datetime
 
-from Python.connexionLocal import *
+from connnexionMongo import *
 
 """
 à partir d'une tendance renseigné recupère tous les documents lui correspondant
@@ -16,7 +16,7 @@ def getAllTrendIfStatusIsFalse():
     q= events.find({'status':False})
     tendances = []
     for trend in q:
-        tr = trend['tendance']
+        tr = trend['id']
         tendances.append(tr)
     return tendances
 
@@ -27,7 +27,7 @@ def getAllTrend():
     q= events.find()
     tendances = []
     for trend in q:
-        tr = trend['tendance']
+        tr = trend['id']
         tendances.append(tr)
     return tendances
 
@@ -58,7 +58,7 @@ trend : tendence
 lieu : le lieu
 """
 def setEventLieuByTrend(trend, lieu):
-    update = events.update({'tendance':trend}, {'$set':{'lieu':lieu}})
+    update = events.update({'id':trend}, {'$set':{'lieu':lieu}})
     return update
 
 """
@@ -67,7 +67,7 @@ trend : tendence
 date : la date
 """
 def setEventDateByTrend(trend, date):
-    update = events.update({'tendance':trend}, {'$set':{'date':date}})
+    update = events.update({'id':trend}, {'$set':{'date':date}})
     return update
 
 
@@ -75,7 +75,7 @@ def setEventDateByTrend(trend, date):
 Mets à jours les champs vide de la collection events(description, lieu, date, status)
 """
 def setFieldEventByTrend(trend, description, lieu, date):
-    update = events.update({'tendance': trend}, {'$set': {'description': description, 'lieu':lieu, 'date':date, 'status':True}})
+    update = events.update({'id': trend}, {'$set': {'description': description, 'lieu':lieu, 'date':date, 'status':True}})
     return update
 
 """
