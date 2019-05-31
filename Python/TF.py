@@ -10,15 +10,33 @@ from spellchecker import SpellChecker
 spell = SpellChecker(language = 'fr')
 TRESHOLD_APPEARENCE = 0.2
 
+
+def deleteDuplicates(text):
+    # Seperate out each word
+    words = text.split(" ")
+
+    # Convert all words to lowercase
+    words = lower(words)
+    print(words)
+
+    # Sort the words in order
+    words.sort()
+    unique = []
+    total_words = len(words)
+    i = 0
+
+    while i < (total_words - 1):
+        if words[i] != words[i + 1]:
+            unique += ' ' + words[i]
+        i += 1
+
+    return unique
 def deleteSubstr(listKeywords = {}):
     i=0
     listKeywords1=listKeywords.copy()
     for w in list(listKeywords):
-        print('w '+w)
         for w1 in list(listKeywords1):
-            print('w1 '+w1)
             if (w1 in w) and w!=w1:
-                print("bonjour "+w+' '+w1)
                 del listKeywords[w1]
                 del listKeywords1[w1]
     return listKeywords

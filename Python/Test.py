@@ -27,6 +27,7 @@ for trend in trends :
     print('del')
     result = deleteSubstr(result)
     result = createResultText(result)
+    result = deleteDuplicates(result)
     print(result)
 
     #find rss article
