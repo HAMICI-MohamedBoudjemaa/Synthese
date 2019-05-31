@@ -4,7 +4,7 @@ import newspaper
 from newspaper import Article
 from time import mktime
 from datetime import datetime
-from Python.connexionLocal import *
+from connexionMongo import *
 from Python.gestion_logging import log_message
 
 LIMIT = 10000000
@@ -51,7 +51,7 @@ def extractDataFlux():
                     published = datetime.fromtimestamp(mktime(date)).isoformat()
                     #contenu = content.text
 
-                    data = {'id_link': rss,'titre':title, 'description':description, 'date_publication':published }
+                    data = {'rss_link': rss,'titre':title, 'description':description, 'date_publication':published, 'type':'' }
                     fluxRSS.save(data)
                     log_message(data,'info')
                     count = count + 1
