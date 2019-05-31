@@ -22,13 +22,10 @@ def most_frequent(List):
 
 
 def getDate_datefinder(txt):
-    now = datetime.datetime.now()
     matches = datefinder.find_dates(txt)
     list_date = []
     for match in matches:
-        if match.year <= 2019:
-            list_date.append(datetime.datetime(now.year, match.month, match.day))
-        else:
+        if match.year >= 2019:
             list_date.append(match)
     return list_date
 
@@ -165,6 +162,8 @@ def getDate2(docs):
         return Frequency_Date
     else:
         return "We can not get a date for this trend"
+
+
 
 
 
