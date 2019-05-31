@@ -1,6 +1,6 @@
 import datetime
 
-from connnexionMongo import *
+from Python.connexionLocal import *
 
 """
 à partir d'une tendance renseigné recupère tous les documents lui correspondant
@@ -16,7 +16,7 @@ def getAllTrendIfStatusIsFalse():
     q= events.find({'status':False})
     tendances = []
     for trend in q:
-        tr = trend['id']
+        tr = trend['tendance']
         tendances.append(tr)
     return tendances
 
@@ -27,7 +27,7 @@ def getAllTrend():
     q= events.find()
     tendances = []
     for trend in q:
-        tr = trend['id']
+        tr = trend['tendance']
         tendances.append(tr)
     return tendances
 
@@ -58,7 +58,7 @@ trend : tendence
 lieu : le lieu
 """
 def setEventLieuByTrend(trend, lieu):
-    update = events.update({'id':trend}, {'$set':{'lieu':lieu}})
+    update = events.update({'tendance':trend}, {'$set':{'lieu':lieu}})
     return update
 
 """
@@ -67,8 +67,7 @@ trend : tendence
 date : la date
 """
 def setEventDateByTrend(trend, date):
-    date = datetime.datetime.strptime(date,  '%d/%m/%Y')
-    update = events.update({'id':trend}, {'$set':{'date':date}})
+    update = events.update({'tendance':trend}, {'$set':{'date':date}})
     return update
 
 
@@ -76,8 +75,7 @@ def setEventDateByTrend(trend, date):
 Mets à jours les champs vide de la collection events(description, lieu, date, status)
 """
 def setFieldEventByTrend(trend, description, lieu, date):
-    date = datetime.datetime.strptime(date, '%d/%m/%Y')
-    update = events.update({'id': trend}, {'$set': {'description': description, 'lieu':lieu, 'date':date, 'status':True}})
+    update = events.update({'tendance': trend}, {'$set': {'description': description, 'lieu':lieu, 'date':date, 'status':True}})
     return update
 
 """
@@ -121,31 +119,58 @@ def searchTextInTitleFluxRSS(search_text):
     else:
         return array[0]['titre']
 
+"""
+cherche si un tweet existe à partir de l'id du tweet
+"""
+def findIfTweetIdExist(tweet_id):
+     id_tweet = list(tweets.find({"tweet_id":tweet_id}).limit(1))
+     return len(id_tweet)
+
+"""
+mets à jour à partir de l'id du tweet le nombre de followers,
+ nombre de tweets et de like d'un tweet 
+"""
+def updateTweets(tweet_id,followers, retweet_count, favorite_count):
+    update = tweets.update({'tweet_id': tweet_id},
+                           {'$set': {'followers':followers,
+                                     'retweet_count':retweet_count,
+                                     'favorite_count':favorite_count
+                                     }
+                           }
+                          )
+    return update
+
+"""
+cherche si une tendance existe dans la collection <<events>> 
+"""
+def findIfEventExist(trend):
+    tendance = list(events.find({"tendance": trend}).limit(1))
+    return len(tendance)
 
 
-
-
-    #Structure champs collection tweets
+#Structure champs collection tweets
 """"
-    "tendance" 
-    "tweet_id" 
-    "id_user" 
-    "username" 
-    "screen_name" 
-    "followers" 
-    "description" 
-    "tweet_text" :
-    "hashtags":  ['hashtags'][indice]['text']
-    "userLocation": 
-    "retweet_count": 
-    "created": 
+    tendance
+    tweet_id
+    user_id
+    username
+    screen_name
+    followers
+    description
+    tweet_text
+    hashtags
+    userLocation
+    retweet_count
+    favorite_count
+    retweeted
+    created
 """
 
 #Structure champs collection events
 """"
-    "id" -> tendance 
-    "description"
-    "lieu" 
-    "date" 
-    "status" 
+    tendance
+    description
+    lieu 
+    date
+    status
 """

@@ -57,10 +57,6 @@
         "rss": "http://www.nouvelobs.com/monde/rss.xml"
     },
 
-    "BFMTV Culture": {
-        "rss": "https://www.bfmtv.com/rss/culture/"
-    },
-
     "Les Echos Week-End": {
         "rss": "https://syndication.lesechos.fr/rss/rss_lesechos_week_end.xml"
     },
@@ -76,9 +72,7 @@
     "francetvinfo : Monde": {
         "rss": "https://www.francetvinfo.fr/monde.rss"
     },
-     "francetvinfo : culture": {
-        "rss": " https://www.francetvinfo.fr/culture.rss"
-    },
+
     "francetvinfo : Decouvertes":{
         "rss": "https://www.francetvinfo.fr/decouverte.rss"
     },
@@ -99,22 +93,41 @@
      "francetvinfo culture": {
         "rss": "https://www.francetvinfo.fr/culture.rss"
     },
-
-    "francetvinfo-monde": {
-        "link": "https://www.francetvinfo.fr/"
+    "BFMTV Politique": {
+        "rss" : "https://www.bfmtv.com/rss/politique/"
     },
-    "general": {
-        "link": "http://www.web-soluces.net/flux-rss/annuaire/actualites.php"
+
+    "BFMTV cinema": {
+        "rss": "https://people.bfmtv.com/rss/cinema/"
+    },
+
+    "BFMTV Culture": {
+        "rss": "https://www.bfmtv.com/rss/culture/"
+    },
+
+    "BFMTV series": {
+        "rss": "https://people.bfmtv.com/rss/series/"
+    },
+    "BFMTV actu-tele": {
+        "rss": "https://vous.bfmtv.com/rss/actu-tele/"
+    },
+    "BFMTV actualite-people": {
+        "rss": "https://people.bfmtv.com/rss/actualite-people/"
+    },
+    "BFMTV internet": {
+        "rss": "https://hightech.bfmtv.com/rss/internet/"
+    },
+    "BFMTV application": {
+        "rss": " https://hightech.bfmtv.com/rss/application/"
+    },
+    "BFMTV Planete": {
+        "rss": "https://www.bfmtv.com/rss/planete/"
+    },
+     "Masculin.com : tous les articles": {
+        "rss": "https://www.masculin.com/rss/general.xml"
+    },
+     "Masculin.com : culture": {
+        "rss": "https://www.masculin.com/rss/culture.xml"
     }
 }
 
- fluxRSS.find({"$text": {"$search": search_text}}).limit(10)
-
-    rech = [{
-            "$text": {"$search": textSearch}},
-            {"score": {"$meta": "textScore"}}).sort(
-                {"score": {"$meta": "textScore"}}]
-
-    rch = "{$text: {$search: "Laurent Homophie Tirard"}},
-    {"score": {$meta: "textScore"}}).sort(
-        {score: {$meta: "textScore"}})"

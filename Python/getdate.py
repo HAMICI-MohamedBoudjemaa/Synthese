@@ -117,6 +117,7 @@ def getDate(tweet, tweetDate):
             except:
                 pass
 
+
     # compare duration and date
     Frequency_Duration, value_Duration = most_frequent(listeDuree1)
     # print("the ate most frequency durantion in tweets " + str(Frequency_Duration) + " number of appearance " + str(value_Duration))
