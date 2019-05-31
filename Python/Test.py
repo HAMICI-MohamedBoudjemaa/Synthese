@@ -9,6 +9,8 @@ for trend in trends :
     docs = getTweetByTrend(trend)
     text = ''
     nbTweets = 0
+    date_event = getDate2(docs)
+
     for doc in docs:
         i = 0
         if (doc['followers'] > 100 and doc['retweet_count']>5) :
@@ -54,6 +56,5 @@ for trend in trends :
     print(searchTextInTitleFluxRSS(tt))
 
     #print(text)
-    date_event = getDate2(docs)
-    print("test" + date_event)
+    print("date event " + date_event)
     print('***************************')
