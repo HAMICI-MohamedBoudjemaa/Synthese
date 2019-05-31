@@ -4,17 +4,14 @@ import newspaper
 from newspaper import Article
 from time import mktime
 from datetime import datetime
-
-from Python.connnexionMongo import fluxRSS
+from Python.connexionLocal import *
 from Python.gestion_logging import log_message
 
 LIMIT = 10000000
 
-
-
 # Charge le fichier Json contenant les liens
 def loadJsonLink():
-    with open("./fichiers/linkRss.json") as data_file:
+    with open("/home/ucp/PycharmProjects/Synthese/fichiers/linkRss.json") as data_file:
         linksNews = json.load(data_file)
     return linksNews
 
@@ -89,7 +86,7 @@ def extractDataFlux():
                 description = entry.get("description")
                 #contenu = content.text
                 published = content.publish_date
-                data = {'link': link, 'titre': title, 'description': description, 'date_publication': published}
+                data = {'link': link, 'titre': title, 'description': description, 'date_publication': published, 'type':''}
                 fluxRSS.save(data)
                 log_message(data, 'info')
                 count = count + 1

@@ -6,6 +6,9 @@
         <list>
           <option value="collectTweets.connnexionMongo" />
           <option value="geonames.fuzzywuzzy" />
+          <option value="Python.requeteMongo.connnexionMongo" />
+          <option value="Python.extractFluxRss.connexionLocal" />
+          <option value="Python.extractFluxRss.*" />
         </list>
       </option>
     </inspection_tool>

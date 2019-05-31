@@ -31,7 +31,7 @@ def getDate_datefinder(txt):
 
 
 def getDate(tweet, tweetDate):
-    # str to date 
+    # str to date
     tweetDate = parser.parse(tweetDate)
 
     # str to list of word
@@ -64,7 +64,7 @@ def getDate(tweet, tweetDate):
         if item in word_list[1:]:
             try:
                 if word_list[word_list.index(item) - 1] in After or word_list[word_list.index(item) + 1] in After:
-                    date_final.append(datetime.datetime(tweetDate.year, tweetDate.month, tweetDate.day + 7))      
+                    date_final.append(datetime.datetime(tweetDate.year, tweetDate.month, tweetDate.day + 7))
             except:
                 pass
     for item in Month_in_txt:
@@ -116,12 +116,12 @@ def getDate(tweet, tweetDate):
                         pass
             except:
                 pass
-            
+
 
     # compare duration and date
     Frequency_Duration, value_Duration = most_frequent(listeDuree1)
     # print("the ate most frequency durantion in tweets " + str(Frequency_Duration) + " number of appearance " + str(value_Duration))
-    
+
     if value_Duration != 0 and value_Duration >= counter:
         Event_Date = str(Frequency_Duration)
         index = listeDuree1.index(Frequency_Duration)
@@ -162,7 +162,6 @@ def getDate2(docs):
         return Frequency_Date
     else:
         return "We can not get a date for this trend"
-
 
 
 

@@ -3,12 +3,17 @@ import json
 import tweepy
 from retrying import retry
 from tweepy import OAuthHandler
-
-from Python.connnexionMongo import *
+from Python.connexionLocal import *
 from Python.functionUtile import clean_text
 from Python.gestion_logging import log_message
+from Python.requeteMongo import *
+
+
+
 
 # Twitter consumer key, consumer secret, access token, access secret
+
+
 ckey = "N4CogFTAcgyNxyuM8jvyrgmH7"
 csecret = "UPsquIqzXdjdD6TLRFp9vf3pU0LRfeOanuxpqwO9tJ3emATshO"
 atoken = "1070779812330041344-1NgUQko3NliICcTZVKgd9m0yEzDtcY"
@@ -39,27 +44,35 @@ def getElementTweet(trend):
     #-filter:retweets : supprimer les retweets
     #new_search = trend + '-filter:retweets',
     data_array = []
-    for page in tweepy.Cursor(api.search, q=trend + ' -filter:retweets', count=100, tweet_mode='extended',lang="fr").pages(10):
+    for page in tweepy.Cursor(api.search, q=trend + ' -filter:retweets', count=15, tweet_mode='extended',lang="fr").pages(1):
         for res in page:
             json_str = json.dumps(res._json)
             data_json = json.loads(json_str)
             tendance = trend
+
+            #Tweet info
             tweet_id = data_json['id_str']
-            id_user = data_json['user']['id']
-            username = clean_text(data_json['user']['name'])
-            screen_name = clean_text(data_json['user']['screen_name'])
-            followers = data_json['user']['followers_count']
-            description = clean_text(data_json['user']['description'])
             tweet_text = clean_text(data_json['full_text'])
             hashtags = data_json['entities']['hashtags']
             retweet_count = data_json['retweet_count']
-            userLocation = data_json['user']['location']
             created_at = data_json['created_at']
-            #created_at = datetime.datetime.strptime(str(created_at), '%Y-%m-%d %H:%M:%S')
+            favorite_count = data_json['favorite_count']  # like tweet
+            retweeted = data_json['retweeted']
+
+            #Info user
+            user_id = data_json['user']['id']
+            username = clean_text(data_json['user']['name'])
+            screen_name = clean_text(data_json['user']['screen_name'])
+            followers = data_json['user']['followers_count']
+            description = data_json['user']['description']
+            userLocation = data_json['user']['location']
+
+            created = datetime.datetime.strptime(str(created_at), '%a %b %d %H:%M:%S %z %Y')
+
             data = {
                     'tendance': tendance,
                     'tweet_id':tweet_id,
-                    'id_user': id_user,
+                    'user_id': user_id,
                     'username': username,
                     'screen_name': screen_name,
                     'followers': followers,
@@ -68,10 +81,17 @@ def getElementTweet(trend):
                     'hashtags': hashtags,
                     'userLocation': userLocation,
                     'retweet_count': retweet_count,
-                    'created': created_at
+                    'favorite_count':favorite_count,
+                    'retweeted':retweeted,
+                    'created': created
                     }
-            log_message(data, 'info')
-            data_array.append(data)
+            #log_message(data, 'info')
+            if findIfTweetIdExist(tweet_id) > 0:
+                log_message(data,"warn")
+                updateTweets(tweet_id,followers, retweet_count, favorite_count)
+            else:
+                log_message(data, 'info')
+                data_array.append(data)
     return data_array
 
 
@@ -82,16 +102,21 @@ def saveCollectionMongo(data):
     tweets.insert_many(data)
 
 def collect_tweet():
-    log_message(getTrend(), 'warn')
+    #log_message(getTrend(), 'warn')
     tr = getTrend()
-    print(len(tr))
-    for trend in getTrend():
+    tendances = getAllTrend() + getTrend()
+    for trend in tendances:
         data = getElementTweet(trend)
-        saveCollectionMongo(data)
-
-        event = {'id':trend, 'description':'', 'lieu': '', 'date': '', 'status':False}
-        events.save(event)
-
+        if len(data) != 0:
+            saveCollectionMongo(data)
+            if findIfEventExist(trend) > 0:
+                log_message("Cet evenement est déjà en base", "error")
+                #updateTweets(tweet_id, followers, retweet_count, favorite_count)
+            else:
+                event = {'tendance':trend, 'description':'', 'lieu': '', 'date': '', 'status':False, 'flux_rss':'', 'tweets_representatifs':''}
+                events.save(event)
+        else:
+            log_message("[***************tweet déjà existant]***************", "error")
 
 
 if __name__ == '__main__':
