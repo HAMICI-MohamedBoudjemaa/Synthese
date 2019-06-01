@@ -1,5 +1,3 @@
-import datetime
-
 from connnexionMongo import *
 
 """
@@ -109,7 +107,8 @@ def searchTextInTitleFluxRSS(search_text):
     array = []
     cursor = fluxRSS.find(
         {'$text': {'$search': search_text}},
-        {'score': {'$meta': 'textScore'}})
+        {'score': {'$meta': 'textScore'}}
+    )
     # Sort by 'score' field.
     cursor.sort([('score', {'$meta': 'textScore'})])
     for doc in cursor:
@@ -131,13 +130,14 @@ mets à jour à partir de l'id du tweet le nombre de followers,
  nombre de tweets et de like d'un tweet 
 """
 def updateTweets(tweet_id,followers, retweet_count, favorite_count):
-    update = tweets.update({'tweet_id': tweet_id},
-                           {'$set': {'followers':followers,
-                                     'retweet_count':retweet_count,
-                                     'favorite_count':favorite_count
-                                     }
-                           }
-                          )
+    update = tweets.update(
+        {'tweet_id': tweet_id},
+        {'$set': {'followers':followers,
+                  'retweet_count':retweet_count,
+                   'favorite_count':favorite_count
+                }
+        }
+    )
     return update
 
 """
@@ -174,3 +174,17 @@ def findIfEventExist(trend):
     date
     status
 """
+
+#Structure collection fluxRSS
+"""
+tendance
+description
+lieu
+date
+status
+False
+flux_rss
+tweets_representatifs
+"""
+if __name__ == '__main__':
+    print(searchTextInTitleFluxRSS("Cannes 2019 : Une Palme d'or honorifique pour Alain Delon"))
