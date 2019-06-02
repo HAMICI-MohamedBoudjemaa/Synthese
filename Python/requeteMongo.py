@@ -1,3 +1,6 @@
+import pymongo
+#from connnexionMongo import *
+
 from connnexionMongo import *
 
 """
@@ -14,7 +17,7 @@ def getAllTrendIfStatusIsFalse():
     q= events.find({'status':False})
     tendances = []
     for trend in q:
-        tr = trend['id']
+        tr = trend['tendance']
         tendances.append(tr)
     return tendances
 
@@ -25,7 +28,7 @@ def getAllTrend():
     q= events.find()
     tendances = []
     for trend in q:
-        tr = trend['id']
+        tr = trend['tendance']
         tendances.append(tr)
     return tendances
 
@@ -48,7 +51,7 @@ trend : tendence
 description : la description
 """
 def setEventDescriptionByTrend(trend, description):
-    update = events.update({'id':trend}, {'$set':{'description':description, 'status':True}})
+    update = events.update({'tendance':trend}, {'$set':{'description':description, 'status':True}})
     return update
 """
 Ajoute le lieu à chaque doc de la collection events
@@ -56,7 +59,7 @@ trend : tendence
 lieu : le lieu
 """
 def setEventLieuByTrend(trend, lieu):
-    update = events.update({'id':trend}, {'$set':{'lieu':lieu}})
+    update = events.update({'tendance':trend}, {'$set':{'lieu':lieu}})
     return update
 
 """
@@ -65,7 +68,7 @@ trend : tendence
 date : la date
 """
 def setEventDateByTrend(trend, date):
-    update = events.update({'id':trend}, {'$set':{'date':date}})
+    update = events.update({'tendance':trend}, {'$set':{'date':date}})
     return update
 
 
@@ -73,7 +76,7 @@ def setEventDateByTrend(trend, date):
 Mets à jours les champs vide de la collection events(description, lieu, date, status)
 """
 def setFieldEventByTrend(trend, description, lieu, date):
-    update = events.update({'id': trend}, {'$set': {'description': description, 'lieu':lieu, 'date':date, 'status':True}})
+    update = events.update({'tendance': trend}, {'$set': {'description': description, 'lieu':lieu, 'date':date, 'status':True}})
     return update
 
 """
@@ -116,6 +119,7 @@ def searchTextInTitleFluxRSS(search_text):
     if not array:
         return ''
     else:
+        print(array[0]['description'])
         return array[0]['titre']
 
 """
@@ -187,4 +191,10 @@ flux_rss
 tweets_representatifs
 """
 if __name__ == '__main__':
-    print(searchTextInTitleFluxRSS("Cannes 2019 : Une Palme d'or honorifique pour Alain Delon"))
+    print(searchTextInTitleFluxRSS("Darmanin et Sébastien"))
+    #fluxRSS.create_index([("titre, descrption", pymongo.TEXT)])
+    #tweets.create_index([("tweet_id", "unique=True")])
+    #tweets.create_index("tweet_id", unique=True)
+    #fluxRSS.create_index([("titre", pymongo.TEXT), ("description", pymongo.TEXT)])
+
+
