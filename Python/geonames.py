@@ -2,39 +2,111 @@ import re
 from fuzzywuzzy import fuzz
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Search
+from elasticsearch_dsl import Q
 import numpy as np
+from heapq import nlargest
 from Python.Place import *
 
-def translateCountry(name):
+THRESHOLD_KEYWORD = 2
+FUZINESS = 85
+TOPHITS = 3
+ELASTICSEARCHAUTHENTIFICATION = Elasticsearch(["https://elastic:ZsCkeJa6qrPR6YICH8nwCRZR@487a3c18579448be987a324822344a49.eu-central-1.aws.cloud.es.io:9243"])
+
+def searchCountryCityByName(name):
     res = None
-    #if len(name) == 2 and name.isupper():
-    #    res = searchGeoidCountryByISO(name)
+    es = ELASTICSEARCHAUTHENTIFICATION
+    geonameSearch = Search(using=es, index="geoname-2019.05.30")
+    alternatenameSearch = Search(using=es, index="alternatenames-2019.05.30")
+    translateSearch = alternatenameSearch.query("term", alternatename__keyword=name)
+    translateSearch = translateSearch.query("term", isoLanguage__keyword='fr')
+    translateSearch = translateSearch[0:3]
+    response = translateSearch.execute()
+    responseDict = response.to_dict()
+    nbRes = responseDict['hits']['total']['value']
+
+    if nbRes > 0:  # City or country exists
+        geonameids = []
+        geonameidHits = responseDict['hits']['hits']
+        for geonameidHit in geonameidHits:
+            geonameids.append(geonameidHit['_source']['geonameid'])
+            for geonameid in geonameids:
+                geonameInfoSearch = geonameSearch.query("term", geonameid__keyword=geonameid)
+                geonameInfoSearch = geonameInfoSearch.query("terms", featureClass__keyword=['P', 'A'])
+                geonameInfoSearch = geonameInfoSearch.exclude("match", population="0")
+                geonameInfoSearch = geonameInfoSearch.exclude("match", featureCode="ADM2")
+                geonameInfoSearch = geonameInfoSearch.exclude("match", featureCode="ADM4")
+                geonameInfoSearch = geonameInfoSearch.exclude("match", featureCode="ADM3")
+                response = geonameInfoSearch.execute()
+                responseDict = response.to_dict()
+                nbRes = responseDict['hits']['total']['value']
+                if nbRes > 0:
+                    returnHits = responseDict['hits']['hits']
+                    res = []
+                    for returnHit in returnHits:
+                        res.append(returnHit['_source'])
+    return res
+
+def searchPlaceByName(name, dictCityCountry):
+    res = None
+    es = ELASTICSEARCHAUTHENTIFICATION
+    geonameSearch = Search(using=es, index="geoname-2019.05.30")
+    alternatenameSearch = Search(using=es, index="alternatenames-2019.05.30")
+
+    mustQuery = [Q('term', name__keyword=name)]
+    mustnotQuery = [Q('match', featureClass='P'), Q('match', featureClass='A')]
+    shouldQuery = []
+
+    if dictCityCountry['country'] is not None:
+        for i in range(len(dictCityCountry['country'])):
+            shouldQuery.append(Q('match', countryCode=dictCityCountry['country'][i]))
+    if dictCityCountry['city'] is not None:
+        for item in dictCityCountry['city']:
+            shouldQuery.append(Q('match', admin2Code=item['admin2Code']))
+            shouldQuery.append(Q('match', countryCode=item['countryCode']))
+
+    q = Q('bool',\
+          must=mustQuery,\
+          should=shouldQuery,\
+          must_not=mustnotQuery)
+
+    placeSearch = geonameSearch.query(q)
+    placeSearch = placeSearch.query("exists", field="admin2Code")
+    placeSearch = placeSearch.query("exists", field="alternatenames")
+    placeSearch = placeSearch[0:5]
+
+    response = placeSearch.execute()
+    responseDict = response.to_dict()
+    nbRes = responseDict['hits']['total']['value']
+    if nbRes > 0:
+        placeHits = responseDict['hits']['hits']
+        for i in range(len(placeHits)):
+            placeHit = placeHits[i]['_source']
+            fuziness = fuzz.ratio(name, placeHit['name'])
+            if fuziness > FUZINESS and placeHit['admin2Code'] is not None:
+                if res is None:
+                    res = []
+                res.append(placeHit)
+
     if res is None:
-        es = Elasticsearch(
-            ["https://elastic:abQ4dELdOF6BDjxlotnF8JPW@a6e8c7481efc4507a806032397318270.eu-central-1.aws.cloud.es.io:9243"])
-        s = Search(using=es, index="alternatenames-2019.05.17")
-        s = s.query("term", alternatename__keyword = name)
-        s = s.query("term", isoLanguage__keyword='fr')
-
-        response = s.execute()
+        popularPlace = alternatenameSearch.query('match', alternatename__keywordl=name)
+        popularPlace = popularPlace.query("term", isoLanguage__keyword='fr')
+        popularPlace = popularPlace[0:3]
+        response = popularPlace.execute()
         responseDict = response.to_dict()
-
         nbRes = responseDict['hits']['total']['value']
         if nbRes > 0:
-            geonameid = responseDict['hits']['hits'][0]['_source']['geonameid']
-            s = Search(using=es, index="countryinfo-2019.05.27")
-            s = s.query("term", geonameid__keyword=geonameid)
-            response = s.execute()
-            responseDict = response.to_dict()
-            nbRes = responseDict['hits']['total']['value']
-            if nbRes > 0:
-                res = geonameid
-    return res
+            placeHits = responseDict['hits']['hits']
+            for placeHit in placeHits:
+                if res is None:
+                    res = []
+                found = searchAllByGeonameid(placeHit['_source']['geonameid'])
+                if found is not None:
+                    res.append(found)
 
 def searchCityByCode(code):
     es = Elasticsearch(
-        ["https://elastic:abQ4dELdOF6BDjxlotnF8JPW@a6e8c7481efc4507a806032397318270.eu-central-1.aws.cloud.es.io:9243"])
-    s = Search(using=es, index="admincode-2019.05.28")
+        ["https://elastic:ZsCkeJa6qrPR6YICH8nwCRZR@487a3c18579448be987a324822344a49.eu-central-1.aws.cloud.es.io:9243"])
+    s = Search(using=es, index="admincode-2019.05.30")
     s = s.query("term", code__keyword = code)
 
     response = s.execute()
@@ -47,69 +119,13 @@ def searchCityByCode(code):
     return res
 
 
-def searchGeoidCountryByName(name):
-    res = None
-    #if len(name) == 2 and name.isupper():
-    #    res = searchGeoidCountryByISO(name)
-
-    if res is None:
-        es = Elasticsearch(
-            ["https://elastic:abQ4dELdOF6BDjxlotnF8JPW@a6e8c7481efc4507a806032397318270.eu-central-1.aws.cloud.es.io:9243"])
-        s = Search(using=es, index="countryinfo-2019.05.27")
-        s = s[0:5]
-        s = s.query("match", Country=name)
-
-        response = s.execute()
-        responseDict = response.to_dict()
-
-        nbRes = responseDict['hits']['total']['value']
-        if nbRes > 0:
-            countryName = responseDict['hits']['hits'][0]['_source']['Country']
-            fuziness = fuzz.ratio(name, countryName)
-            if fuziness > 90:
-                res = responseDict['hits']['hits'][0]['_source']['geonameid']
-    return res
-
-def searchGeoidCountryByISO(iso):
-    es = Elasticsearch(
-        ["https://elastic:abQ4dELdOF6BDjxlotnF8JPW@a6e8c7481efc4507a806032397318270.eu-central-1.aws.cloud.es.io:9243"])
-    s = Search(using=es, index="countryinfo-2019.05.27")
-    s = s[0:5]
-    s = s.query("match", ISO=iso)
-
-    response = s.execute()
-    responseDict = response.to_dict()
-
-    res = None
-    nbRes = responseDict['hits']['total']['value']
-    if nbRes > 0:
-        res = responseDict['hits']['hits'][0]['_source']['geonameid']
-    return res
-
-def searchNameCountryByISO(iso):
-    es = Elasticsearch(
-        ["https://elastic:abQ4dELdOF6BDjxlotnF8JPW@a6e8c7481efc4507a806032397318270.eu-central-1.aws.cloud.es.io:9243"])
-    s = Search(using=es, index="countryinfo-2019.05.27")
-    s = s[0:5]
-    s = s.query("match", ISO=iso)
-
-    response = s.execute()
-    responseDict = response.to_dict()
-
-    res = None
-    nbRes = responseDict['hits']['total']['value']
-    if nbRes > 0:
-        res = responseDict['hits']['hits'][0]['_source']['Country']
-    return res
-
 def searchAllByGeonameid(geonameid):
-    es = Elasticsearch(
-        ["https://elastic:abQ4dELdOF6BDjxlotnF8JPW@a6e8c7481efc4507a806032397318270.eu-central-1.aws.cloud.es.io:9243"])
-    s = Search(using=es, index="geoname-2019.05.16")
-    s = s[0:5]
-    s = s.query("match", geonameid=geonameid)
+    es = ELASTICSEARCHAUTHENTIFICATION
+    geonameSearch = Search(using=es, index="geoname-2019.05.30")
+    geonameSearch = geonameSearch[0:5]
+    geonameSearch = geonameSearch.query("match", geonameid=geonameid)
 
-    response = s.execute()
+    response = geonameSearch.execute()
     responseDict = response.to_dict()
     found = None
 
@@ -120,7 +136,7 @@ def searchAllByGeonameid(geonameid):
 
 def searchCityNameByCode(code):
     es = Elasticsearch(
-        ["https://elastic:abQ4dELdOF6BDjxlotnF8JPW@a6e8c7481efc4507a806032397318270.eu-central-1.aws.cloud.es.io:9243"])
+        ["https://elastic:ZsCkeJa6qrPR6YICH8nwCRZR@487a3c18579448be987a324822344a49.eu-central-1.aws.cloud.es.io:9243"])
     s = Search(using=es, index="admincode-2019.05.28")
     s = s[0:5]
     s = s.query("match", code=code)
@@ -135,84 +151,16 @@ def searchCityNameByCode(code):
         found = responseDict['hits']['hits'][0]['_source']['name']
     return found
 
-def searchGeoidPlaceByName(name):
-    es = Elasticsearch(
-        ["https://elastic:abQ4dELdOF6BDjxlotnF8JPW@a6e8c7481efc4507a806032397318270.eu-central-1.aws.cloud.es.io:9243"])
-    s = Search(using=es, index="geoname-2019.05.16")
-    s = s.query("match", name=name)
-    #s = s.query("exists", field="alternatenames")
-    s = s.query("exists", field="admin1Code")
-    s = s[0:5]
-    #s = s.sort({"_script": {
-    #     "script": "doc['alternatenames.keyword'].size()",
-    #     "type": "number",
-    #     "order": "asc"
-    #  }
-   #})
-
-    response = s.execute()
-    responseDict = response.to_dict()
-    foundCity = None
-    foundOther = None
-
-    nbRes = responseDict['hits']['total']['value']
-    if nbRes > 0:
-        resContent = responseDict['hits']['hits']
-        for i in range(len(resContent)):
-            res = resContent[i]['_source']
-            fuziness = fuzz.ratio(name, res['name'])
-
-            if res['featureClass'] == 'P':
-                if fuziness > 95:
-                    if foundCity is None:
-                        foundCity = []
-                    foundCity.append(res['geonameid'])
-            else:
-                if fuziness > 65 and res['admin2Code'] is not None:
-                    if foundOther is None:
-                        foundOther = []
-                    foundOther.append(res['geonameid'])
-
-        if foundCity is None:
-            return foundOther
-        else :
-            return foundCity
-
-
-def searchGeoidByName(name):
-    es = Elasticsearch(["https://elastic:abQ4dELdOF6BDjxlotnF8JPW@a6e8c7481efc4507a806032397318270.eu-central-1.aws.cloud.es.io:9243"])
-    s = Search(using=es, index="alternatenames-2019.05.17")
-    s = s.query("match", alternatename=name)
-    s.aggs.bucket('countResults', 'terms', field='geonameid.keyword')
-
-    response = s.execute()
-    responseDict = response.to_dict()
-    found = None
-
-    results = responseDict['aggregations']['countResults']['buckets']
-    if len(results) > 0:
-        i = 0
-        found = []
-        for i in range(len(results)):
-            if i == 3:
-                break
-
-            geonameId = results[i]['key']
-            docCount = results[i]['doc_count']
-            if docCount >= 5:
-                resultGeoname = searchAllByGeonameid(geonameId)
-                if resultGeoname is not None:
-                    nameLookup = resultGeoname['name']
-                    fuziness = fuzz.ratio(name, nameLookup)
-                    if fuziness > 50:
-                        found.append(resultGeoname)
-    return found
-
 def textProcessing(text):
     text = re.sub(r'\-', ' ', text)
     text = re.sub(r'\"', '', text)
     text = re.sub(r'\.\s*(?=)[A-Z]', lambda m: m.group().lower(), text)  # cute. This is a phrase -> cute. this is..
-    text = re.sub('^[A-Z]', lambda m: m.group().lower(), text, flags=re.M)
+    text = re.sub(r'\?\s*(?=)[A-Z]', lambda m: m.group().lower(), text)  # cute? This is a phrase -> cute. this is..
+    text = re.sub(r'\!\s*(?=)[A-Z]', lambda m: m.group().lower(), text)  # cute? This is a phrase -> cute. this is..
+    text = re.sub(r'\:\s*(?=)[A-Z]', lambda m: m.group().lower(), text)  # cute? This is a phrase -> cute. this is..
+    text = re.sub(r'\;\s*(?=)[A-Z]', lambda m: m.group().lower(), text)  # cute? This is a phrase -> cute. this is..
+    #text = re.sub(r'\W\s*(?=)[A-Z]', lambda m: m.group().lower(), text)  # cute! This is a phrase -> cute. this is..
+    #text = re.sub('^\s*[A-Z]', lambda m: m.group().lower(), text, flags=re.M)
     placeDict = dict()
     placeRegex = re.compile(r'([A-Z][A-Za-z]+(\s+[A-Z][a-z]+)*)')
     hashtagRegex = re.compile(r'\#[A-Za-z0-9]*')
@@ -222,6 +170,16 @@ def textProcessing(text):
     for place in places:
         place = place[0].strip()
         place = re.sub(r'\bThe\b', '', place)
+        place = re.sub(r'\bLe\b', '', place)
+        place = re.sub(r'\bLa\b', '', place)
+        place = re.sub(r'\bL\'\b', '', place)
+        place = re.sub(r'\bUn\b', '', place)
+        place = re.sub(r'\bUne\b', '', place)
+        place = re.sub(r'\bTa\b', '', place)
+        place = re.sub(r'\bTon\b', '', place)
+        place = re.sub(r'\bVotre\b', '', place)
+        place = re.sub(r'\bSon\b', '', place)
+        place = re.sub(r'\bSes\b', '', place)
         if place.isupper():  # WASHINGTON -> #Washington
              place = place.lower()
              place = place.capitalize()
@@ -241,117 +199,179 @@ def textProcessing(text):
         else:
             placeDict[hashtag] = 1
 
+    newPlaceDict = dict()
+    for key,value in placeDict.items():
+        if value > THRESHOLD_KEYWORD:
+            newPlaceDict[key] = value
+    placeDict = newPlaceDict
+    del(newPlaceDict)
     return placeDict
 
 def analyze(str):
     cityDict = dict()
     countryDict = dict()
-    continentDict = dict()
     placeDict = dict()
 
+    cityTopCountDict = None
+    countryTopCountDict = None
+    placeTopCountDict = None
+
     resultDict = dict()
+    resultDict['country'] = None
+    resultDict['city'] = None
+    resultDict['place'] = None
 
-    placeExtracted = textProcessing(str)
-    if placeExtracted is not None:
-        for place in placeExtracted:
-            type = None
-            resultPlace = []
-            placeInfoArray = translateCountry(place)
+    extractedCityCountry = textProcessing(str)
+    extractedPlace = []
+    dictCityCountry = dict()
+    dictCityCountry['country'] = None
+    dictCityCountry['city'] = None
 
-            if placeInfoArray is not None:
-                type = 'Country'
-            else:
-                type = 'Other'
+    if extractedCityCountry is not None:
+        for extractedItem in extractedCityCountry:
+            arrayCityCountry = searchCountryCityByName(extractedItem)
 
-            if type == 'Country':
-                placeObject = Place()
-                info = searchAllByGeonameid(placeInfoArray)
-                placeObject.name = info['name']
-                placeObject.type = info['featureClass']
-                if info['countryCode'] is not None:
-                    placeObject.ofCountry = info['countryCode']
-                else:
-                    placeObject.ofCountry = "Not Available"
+            if arrayCityCountry is not None:
+                if arrayCityCountry[0]['featureClass'] == 'A':
+                    type = 'Country'
+                elif arrayCityCountry[0]['featureClass'] == 'P':
+                    type = 'City'
 
-                if place not in countryDict:
-                    countryDict[place] = dict()
-                countryDict[place]['count'] = placeExtracted[place]
-                countryDict[place]['info'] = placeObject
-
-            if type == 'Other':
-                infoArray = None
-                placeInfoArray = searchGeoidPlaceByName(place)
-                if placeInfoArray is not None:
-                    for placeInfo in placeInfoArray:
+                if type == 'Country':
+                    countryTopCountDict = dict()
+                    if dictCityCountry['country'] is None:
+                        dictCityCountry['country'] = []
+                    for item in arrayCityCountry:
                         placeObject = Place()
-                        info = searchAllByGeonameid(placeInfo)
-                        placeObject.name = info['name']
-                        placeObject.type = info['featureClass']
+                        placeObject.name = item['name']
+                        placeObject.type = 'Pays'
+                        placeObject.ofCountry = item['countryCode']
+                        #countryDict[extractedItem]['count'] = extractedCityCountry[extractedItem]
+                        countryDict[extractedItem] = placeObject
+                        countryTopCountDict[extractedItem] = extractedCityCountry[extractedItem]
+                        dictCityCountry['country'].append(item['countryCode'])
 
-                        if info['featureClass'] == 'P':
-                            placeObject.ofCountry = info['countryCode']
-                            if place not in cityDict:
-                                cityDict[place] = dict()
-                                cityDict[place]['info'] = []
-                            cityDict[place]['info'].append(placeObject)
-                            cityDict[place]['count'] = placeExtracted[place]
-                        else:
-                            placeObject.ofCountry = info['countryCode']
-                            placeObject.ofCity = searchCityByCode(
-                                info['countryCode'] + "." + info['admin1Code'] + "." + info[
-                                    'admin2Code'])
-                            if place not in placeDict:
-                                placeDict[place] = dict()
-                                placeDict[place]['info'] = []
-                            placeDict[place]['info'].append(placeObject)
-                            placeDict[place]['count'] = placeExtracted[place]
+                if type == 'City':
+                    cityTopCountDict = dict()
+                    if dictCityCountry['city'] is None:
+                        dictCityCountry['city'] = []
+                    for item in arrayCityCountry:
+                        placeObject = Place()
+                        placeObject.name = item['name']
+                        placeObject.type = 'Ville'
+                        placeObject.ofCountry = item['countryCode']
+                        #cityDict[extractedItem]['count'] = extractedCityCountry[extractedItem]
+                        cityDict[extractedItem] = placeObject
+                        cityTopCountDict[extractedItem] = extractedCityCountry[extractedItem]
+                        dictCityCountry['city'].append({'countryCode':item['countryCode'],\
+                                                        'admin2Code':item['admin2Code']})
 
-        maxCountCountry = 0
-        maxConutryElement = None
-        for country in countryDict:
-            if countryDict[country]['count'] >= maxCountCountry:
-                maxCountCountry = countryDict[country]['count']
-                maxConutryElement = [country, countryDict[country]]
+            else:
+                extractedPlace.append([extractedItem,extractedCityCountry[extractedItem]])
 
-        maxCountCity = 0
-        maxCityElement = None
-        for city in cityDict:
-            if cityDict[city]['count'] >= maxCountCity:
-                maxCountCity = cityDict[city]['count']
-                maxCityElement = [city, cityDict[city]]
+        for place in extractedPlace:
+            placename = place[0]
+            arrayPlace = searchPlaceByName(placename, dictCityCountry)
 
-        maxCountPlace = 0
-        maxPlaceElement = None
-        for place in placeDict:
-            if placeDict[place]['count'] >= maxCountPlace:
-                maxCountPlace = placeDict[place]['count']
-                maxPlaceElement = [place, placeDict[place]]
+            if arrayPlace is not None:
+                placeTopCountDict = dict()
+                for item in arrayPlace:
+                    placeObject = Place()
+                    placeObject.name = item['name']
+                    placeObject.ofCountry = item['countryCode']
+                    placeObject.ofCity = item['countryCode'] + "." + item['admin1Code'] + "." + item['admin2Code']
+                    placeDict[place] = placeObject
+                    placeTopCountDict[extractedItem] = extractedCityCountry[place]
 
-        resultDict['country'] = maxConutryElement
-        resultDict['city'] = maxCityElement
-        resultDict['place'] = maxPlaceElement
-
+        if countryTopCountDict is not None:
+            topCountry = nlargest(TOPHITS, countryTopCountDict, countryTopCountDict.get)
+            resultDict['country'] = dict()
+            for country in topCountry:
+                resultDict['country'][country] = [countryTopCountDict[country], countryDict[country]]
+        if cityTopCountDict is not None:
+            topCity = nlargest(TOPHITS, cityTopCountDict, cityTopCountDict.get)
+            resultDict['city'] = dict()
+            for city in topCity:
+                resultDict['city'][city] = [cityTopCountDict[city], cityDict[city]]
+        if placeTopCountDict is not None:
+            topPlace = nlargest(TOPHITS, placeTopCountDict, placeTopCountDict.get)
+            resultDict['place'] = dict()
+            for place in placeDict:
+                resultDict['place'][place] = [placeTopCountDict[place], topPlace[place]]
 
     return resultDict
 
 def showResult(arrayResult):
 
-        if arrayResult['country'] is not None:
-            print('Country: {} show {} times in the document'.format(arrayResult['country'][0], arrayResult['country'][1]['count']))
-            print('******************\n')
+    if arrayResult['country'] is not None:
+        print('******************************************************')
+        print('*                    Pays trouvés                    *')
+        print('******************************************************')
+        for country in arrayResult['country']:
+            count = arrayResult['country'][country][0]
+            info = arrayResult['country'][country][1]
+            print('* [{}] apparait {} fois dans le document'.format(country, count))
+            print('* [{}] Code Pays: {}'.format(country, info.ofCountry))
+        print('******************************************************')
+        print('\n')
+    else:
+        print('******************************************************')
+        print('*          Pas d\'information pour les pays          *')
+        print('******************************************************')
+        print('\n')
 
-        if arrayResult['city'] is not None:
-            arrayInfoCity = ''
-            for info in arrayResult['city'][1]['info']:
-                arrayInfoCity += 'name: ' + info.name + ', ' + 'country: ' + info.ofCountry + ' || '
-            print('City: {} show {} times in the document with informations\n {}'.format(arrayResult['city'][0], arrayResult['city'][1]['count'], arrayInfoCity))
-            print('******************\n')
+    if arrayResult['country'] is not None:
+        print('******************************************************')
+        print('*                   Villes trouvés                   *')
+        print('******************************************************')
+        for city in arrayResult['city']:
+            count = arrayResult['city'][city][0]
+            info = arrayResult['city'][city][1]
+            print('* [{}] apparait {} fois dans le document'.format(city, count))
+            print('* [{}] Code Pays: {}'.format(city, info.ofCountry))
+        print('******************************************************')
+        print('\n')
+    else:
+        print('******************************************************')
+        print('*         Pas d\'information pour les villes         *')
+        print('******************************************************')
+        print('\n')
 
-        if arrayResult['place'] is not None:
-            arrayInfoPlace = ''
-            for info in arrayResult['place'][1]['info']:
-                arrayInfoPlace += 'name: ' + info.name + ', ' + 'city: ' + info.ofCity + ', ' + 'country: ' + info.ofCountry + ' || '
-            print('Place: {} show {} times in the document with informations\n {}'.format(arrayResult['place'][0],
-                                                                                         arrayResult['place'][1]['count'],
-                                                                                         arrayInfoPlace))
-            print('******************\n')
+
+    if arrayResult['place'] is not None:
+        print('******************************************************')
+        print('*                   Lieux trouvés                    *')
+        print('******************************************************')
+        for place in arrayResult['place']:
+            place = arrayResult['place'][place][0]
+            info = arrayResult['place'][place][1]
+            print('* [{}] apparait {} fois dans le document'.format(place, count))
+            print('* [{}] Code Pays: {}'.format(place, info.ofCountry))
+            print('* [{}] Villes: {}'.format(place, searchCityByCode(info.ofCity)))
+        print('******************************************************')
+        print('\n')
+    else :
+        print('******************************************************')
+        print('*         Pas d\'information pour les lieux          *')
+        print('******************************************************')
+        print('\n')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
