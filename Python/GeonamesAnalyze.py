@@ -133,17 +133,17 @@ def analyze(str):
                     placeTopCountDict[placename] = place[1]
 
 
-        if countryTopCountDict is not None:
+        if countryTopCountDict :
             topCountry = nlargest(TOPHITS, countryTopCountDict, countryTopCountDict.get)
             resultDict['country'] = dict()
             for country in topCountry:
                 resultDict['country'][country] = [countryTopCountDict[country], countryDict[country]]
-        if cityTopCountDict is not None:
+        if cityTopCountDict:
             topCity = nlargest(TOPHITS, cityTopCountDict, cityTopCountDict.get)
             resultDict['city'] = dict()
             for city in topCity:
                 resultDict['city'][city] = [cityTopCountDict[city], cityDict[city]]
-        if placeTopCountDict is not None:
+        if placeTopCountDict:
             topPlace = nlargest(TOPHITS, placeTopCountDict, placeTopCountDict.get)
             resultDict['place'] = dict()
             for place in topPlace:
