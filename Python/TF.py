@@ -12,7 +12,7 @@ from requeteMongo import searchTextInTitleFluxRSS
 spell = SpellChecker(language = 'fr')
 TRESHOLD_APPEARENCE = 0.2
 
-
+#Fonction qui recherche la description des tweets
 def tweetDescription(text, nbTweets, docs1):
     # find keywords
     listKeywords = createListKeywords(text, nbTweets)
