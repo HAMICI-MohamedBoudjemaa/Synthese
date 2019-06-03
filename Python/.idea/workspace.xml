@@ -2,8 +2,96 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2bc9f950-6109-4793-b864-69010e3e43fb" name="Default" comment="">
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch-7.0.2.dist-info/AUTHORS" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch-7.0.2.dist-info/INSTALLER" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch-7.0.2.dist-info/LICENSE" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch-7.0.2.dist-info/METADATA" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch-7.0.2.dist-info/RECORD" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch-7.0.2.dist-info/WHEEL" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch-7.0.2.dist-info/top_level.txt" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/__init__.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/client/__init__.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/client/cat.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/client/cluster.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/client/indices.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/client/ingest.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/client/nodes.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/client/remote.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/client/snapshot.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/client/tasks.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/client/utils.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/client/xpack/__init__.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/client/xpack/ccr.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/client/xpack/data_frame.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/client/xpack/deprecation.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/client/xpack/graph.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/client/xpack/ilm.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/client/xpack/indices.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/client/xpack/license.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/client/xpack/migration.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/client/xpack/ml.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/client/xpack/monitoring.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/client/xpack/rollup.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/client/xpack/security.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/client/xpack/sql.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/client/xpack/ssl.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/client/xpack/watcher.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/compat.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/connection/__init__.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/connection/base.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/connection/http_requests.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/connection/http_urllib3.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/connection/pooling.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/connection_pool.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/exceptions.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/helpers/__init__.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/helpers/actions.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/helpers/errors.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/helpers/test.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/serializer.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch/transport.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch_dsl-7.0.0.dist-info/INSTALLER" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch_dsl-7.0.0.dist-info/METADATA" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch_dsl-7.0.0.dist-info/RECORD" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch_dsl-7.0.0.dist-info/WHEEL" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch_dsl-7.0.0.dist-info/top_level.txt" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch_dsl/__init__.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch_dsl/aggs.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch_dsl/analysis.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch_dsl/connections.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch_dsl/document.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch_dsl/exceptions.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch_dsl/faceted_search.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch_dsl/field.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch_dsl/function.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch_dsl/index.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch_dsl/mapping.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch_dsl/query.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch_dsl/response/__init__.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch_dsl/response/aggs.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch_dsl/response/hit.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch_dsl/search.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch_dsl/serializer.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch_dsl/update_by_query.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch_dsl/utils.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/elasticsearch_dsl/wrappers.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/fuzzywuzzy-0.17.0.dist-info/DESCRIPTION.rst" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/fuzzywuzzy-0.17.0.dist-info/INSTALLER" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/fuzzywuzzy-0.17.0.dist-info/METADATA" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/fuzzywuzzy-0.17.0.dist-info/RECORD" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/fuzzywuzzy-0.17.0.dist-info/WHEEL" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/fuzzywuzzy-0.17.0.dist-info/metadata.json" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/fuzzywuzzy-0.17.0.dist-info/top_level.txt" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/fuzzywuzzy-0.17.0.dist-info/zip-safe" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/fuzzywuzzy/StringMatcher.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/fuzzywuzzy/__init__.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/fuzzywuzzy/fuzz.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/fuzzywuzzy/process.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/fuzzywuzzy/string_processing.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/venv/Lib/site-packages/fuzzywuzzy/utils.py" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/TF.py" afterPath="$PROJECT_DIR$/TF.py" />
+      <change beforePath="$PROJECT_DIR$/GeonamesAnalyze.py" afterPath="$PROJECT_DIR$/GeonamesAnalyze.py" />
+      <change beforePath="$PROJECT_DIR$/Test.py" afterPath="$PROJECT_DIR$/Test.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -14,17 +102,7 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="connnexionMongo.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/connnexionMongo.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="14" lean-forward="false" selection-start-line="0" selection-start-column="14" selection-end-line="0" selection-end-column="14" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="TF.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="TF.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/TF.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="104">
@@ -46,11 +124,33 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="GeonamesAnalyze.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/GeonamesAnalyze.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="63">
+              <caret line="3" column="5" lean-forward="false" selection-start-line="3" selection-start-column="5" selection-end-line="3" selection-end-column="5" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="GeonamesSearch.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/GeonamesSearch.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="105">
+              <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#9#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="Test.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="420">
-              <caret line="22" column="43" lean-forward="true" selection-start-line="22" selection-start-column="43" selection-end-line="22" selection-end-column="43" />
+            <state relative-caret-position="567">
+              <caret line="27" column="63" lean-forward="false" selection-start-line="27" selection-start-column="63" selection-end-line="27" selection-end-column="63" />
               <folding>
                 <element signature="e#0#16#0" expanded="true" />
               </folding>
@@ -169,8 +269,9 @@
         <option value="$PROJECT_DIR$/LDAFinal.py" />
         <option value="$PROJECT_DIR$/getdate.py" />
         <option value="$PROJECT_DIR$/requeteMongo.py" />
-        <option value="$PROJECT_DIR$/Test.py" />
         <option value="$PROJECT_DIR$/TF.py" />
+        <option value="$PROJECT_DIR$/Test.py" />
+        <option value="$PROJECT_DIR$/GeonamesAnalyze.py" />
       </list>
     </option>
   </component>
@@ -226,6 +327,24 @@
     </option>
   </component>
   <component name="RunManager" selected="Python.Test">
+    <configuration name="GeonamesAnalyze" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="Python" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/GeonamesAnalyze.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
     <configuration name="LDAFinal" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -298,18 +417,20 @@
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
-    <list size="4">
+    <list size="5">
       <item index="0" class="java.lang.String" itemvalue="Python.TF" />
       <item index="1" class="java.lang.String" itemvalue="Python.Test" />
       <item index="2" class="java.lang.String" itemvalue="Python.testSpell" />
       <item index="3" class="java.lang.String" itemvalue="Python.LDAFinal" />
+      <item index="4" class="java.lang.String" itemvalue="Python.GeonamesAnalyze" />
     </list>
     <recent_temporary>
-      <list size="4">
+      <list size="5">
         <item index="0" class="java.lang.String" itemvalue="Python.Test" />
-        <item index="1" class="java.lang.String" itemvalue="Python.LDAFinal" />
-        <item index="2" class="java.lang.String" itemvalue="Python.testSpell" />
-        <item index="3" class="java.lang.String" itemvalue="Python.TF" />
+        <item index="1" class="java.lang.String" itemvalue="Python.GeonamesAnalyze" />
+        <item index="2" class="java.lang.String" itemvalue="Python.LDAFinal" />
+        <item index="3" class="java.lang.String" itemvalue="Python.testSpell" />
+        <item index="4" class="java.lang.String" itemvalue="Python.TF" />
       </list>
     </recent_temporary>
   </component>
@@ -340,7 +461,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.805708" sideWeight="0.50416666" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33369923" sideWeight="0.49583334" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5400659" sideWeight="0.49583334" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32930845" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -397,36 +518,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="861">
-          <caret line="42" column="40" lean-forward="true" selection-start-line="42" selection-start-column="40" selection-end-line="42" selection-end-column="40" />
-          <folding>
-            <element signature="e#0#16#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/TF.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4095">
-          <caret line="199" column="136" lean-forward="false" selection-start-line="199" selection-start-column="136" selection-end-line="199" selection-end-column="136" />
-          <folding>
-            <element signature="e#398#986#0" expanded="false" />
-            <element signature="e#1020#1380#0" expanded="false" />
-            <element signature="e#1422#1670#0" expanded="false" />
-            <element signature="e#1717#2762#0" expanded="false" />
-            <element signature="e#7674#8220#0" expanded="false" />
-            <element signature="e#8259#8844#0" expanded="false" />
-            <element signature="e#8882#9460#0" expanded="false" />
-            <element signature="e#9497#10089#0" expanded="false" />
-            <element signature="e#10118#10855#0" expanded="false" />
-            <element signature="e#10882#11207#0" expanded="false" />
-            <element signature="e#11282#11607#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/requeteMongo.py" />
     <entry file="file://$PROJECT_DIR$/connnexionMongo.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -907,16 +998,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="22" column="43" lean-forward="true" selection-start-line="22" selection-start-column="43" selection-end-line="22" selection-end-column="43" />
-          <folding>
-            <element signature="e#0#16#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/TF.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="104">
@@ -934,6 +1015,34 @@
             <element signature="e#10882#11207#0" expanded="false" />
             <element signature="e#11282#11607#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/GeonamesSearch.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="567">
+          <caret line="27" column="63" lean-forward="false" selection-start-line="27" selection-start-column="63" selection-end-line="27" selection-end-column="63" />
+          <folding>
+            <element signature="e#0#16#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/GeonamesAnalyze.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="63">
+          <caret line="3" column="5" lean-forward="false" selection-start-line="3" selection-start-column="5" selection-end-line="3" selection-end-column="5" />
+          <folding />
         </state>
       </provider>
     </entry>

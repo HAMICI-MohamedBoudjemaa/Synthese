@@ -1,6 +1,7 @@
 from TF import *
 from requeteMongo import *
 from getdate import *
+from GeonamesAnalyze import *
 import textdistance
 
 trends = getAllTrend()
@@ -21,3 +22,7 @@ for trend in trends :
                 nbTweets+=1
 
     tweetDescription(text, nbTweets, docs1)
+    temp=analyze(text)
+    showResult(temp)
+    analyzeResult(temp)
+    print('****************************************************')
