@@ -4,7 +4,7 @@ from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Search
 from elasticsearch_dsl import Q
 
-FUZINESS = 85
+FUZINESS = 90
 ELASTICSEARCHAUTHENTIFICATION = Elasticsearch(["https://elastic:ZsCkeJa6qrPR6YICH8nwCRZR@487a3c18579448be987a324822344a49.eu-central-1.aws.cloud.es.io:9243"])
 
 def searchCountryCityByName(name):
@@ -82,6 +82,7 @@ def searchPlaceByName(name, dictCityCountry):
     nbRes = responseDict['hits']['total']['value']
     if nbRes > 0:
         placeHits = responseDict['hits']['hits']
+        #print(placeHits)
         for i in range(len(placeHits)):
             placeHit = placeHits[i]['_source']
             fuziness = fuzz.ratio(name, placeHit['name'])
@@ -91,9 +92,9 @@ def searchPlaceByName(name, dictCityCountry):
                 res.append(placeHit)
 
     if res is None:
-        popularPlace = alternatenameSearch.query('match', alternatename__keywordl=name)
+        popularPlace = alternatenameSearch.query('match', alternatename=name)
         popularPlace = popularPlace.query("term", isoLanguage__keyword='fr')
-        popularPlace = popularPlace[0:3]
+        popularPlace = popularPlace[0:1]
         response = popularPlace.execute()
         responseDict = response.to_dict()
         nbRes = responseDict['hits']['total']['value']
@@ -102,9 +103,12 @@ def searchPlaceByName(name, dictCityCountry):
             for placeHit in placeHits:
                 if res is None:
                     res = []
-                found = searchAllByGeonameid(placeHit['_source']['geonameid'])
-                if found is not None:
-                    res.append(found)
+                fuziness = fuzz.ratio(placeHit['_source']['alternatename'], name)
+                if fuziness > FUZINESS:
+                    found = searchAllByGeonameid(placeHit['_source']['geonameid'])
+                    if found is not None:
+                        res.append(found)
+    return res
 
 def searchCityByCode(code):
     es = Elasticsearch(
@@ -126,6 +130,9 @@ def searchAllByGeonameid(geonameid):
     geonameSearch = Search(using=es, index="geoname-2019.05.30")
     geonameSearch = geonameSearch[0:5]
     geonameSearch = geonameSearch.query("match", geonameid=geonameid)
+    geonameSearch = geonameSearch.query("exists", field="admin2Code")
+    geonameSearch = geonameSearch.exclude("match", featureClass="A")
+    geonameSearch = geonameSearch.exclude("match", featureClass="P")
 
     response = geonameSearch.execute()
     responseDict = response.to_dict()

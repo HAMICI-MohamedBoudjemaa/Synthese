@@ -22,19 +22,13 @@ def textProcessing(text):
     places = placeRegex.findall(text)
     hashtags = hashtagRegex.findall(text)
 
+    stopWordRegexArray = ['\bThe\b', '\bLe\b', '\bLa\b', '\bL\'\b', '\bUn\b', '\bUne\b', \
+                     '\bTa\b', '\bTon\b', '\bSon\b', '\bSa\b', '\bSes\b', '\bVotre\b', '\bNotre\b', \
+                     '\bJe\b', '\bTu\b', '\bNous\b', '\bVous\b', '\bIl\b', '\bElle\b']
     for place in places:
         place = place[0].strip()
-        place = re.sub(r'\bThe\b', '', place)
-        place = re.sub(r'\bLe\b', '', place)
-        place = re.sub(r'\bLa\b', '', place)
-        place = re.sub(r'\bL\'\b', '', place)
-        place = re.sub(r'\bUn\b', '', place)
-        place = re.sub(r'\bUne\b', '', place)
-        place = re.sub(r'\bTa\b', '', place)
-        place = re.sub(r'\bTon\b', '', place)
-        place = re.sub(r'\bVotre\b', '', place)
-        place = re.sub(r'\bSon\b', '', place)
-        place = re.sub(r'\bSes\b', '', place)
+        for stopWordRegex in stopWordRegexArray:
+            place = re.sub(stopWordRegex, '', place)
         if place.isupper():  # WASHINGTON -> #Washington
              place = place.lower()
              place = place.capitalize()
@@ -86,6 +80,7 @@ def analyze(str):
     if extractedCityCountry is not None:
         countryTopCountDict = dict()
         cityTopCountDict = dict()
+        placeTopCountDict = dict()
         for extractedItem in extractedCityCountry:
             arrayCityCountry = searchCountryCityByName(extractedItem)
             if arrayCityCountry is not None:
@@ -129,14 +124,14 @@ def analyze(str):
             arrayPlace = searchPlaceByName(placename, dictCityCountry)
 
             if arrayPlace is not None:
-                placeTopCountDict = dict()
                 for item in arrayPlace:
                     placeObject = Place()
                     placeObject.name = item['name']
                     placeObject.ofCountry = item['countryCode']
                     placeObject.ofCity = item['countryCode'] + "." + item['admin1Code'] + "." + item['admin2Code']
-                    placeDict[place] = placeObject
-                    placeTopCountDict[extractedItem] = extractedCityCountry[place]
+                    placeDict[placename] = placeObject
+                    placeTopCountDict[placename] = place[1]
+
 
         if countryTopCountDict is not None:
             topCountry = nlargest(TOPHITS, countryTopCountDict, countryTopCountDict.get)
@@ -151,8 +146,8 @@ def analyze(str):
         if placeTopCountDict is not None:
             topPlace = nlargest(TOPHITS, placeTopCountDict, placeTopCountDict.get)
             resultDict['place'] = dict()
-            for place in placeDict:
-                resultDict['place'][place] = [placeTopCountDict[place], topPlace[place]]
+            for place in topPlace:
+                resultDict['place'][place] = [placeTopCountDict[place], placeDict[place]]
 
     return resultDict
 
@@ -201,7 +196,7 @@ def showResult(arrayResult):
         print('*                     Lieux trouvés                      *')
         print('**********************************************************')
         for place in arrayResult['place']:
-            place = arrayResult['place'][place][0]
+            count = arrayResult['place'][place][0]
             info = arrayResult['place'][place][1]
             showStatement('* [{}] apparait {} fois dans le document'.format(place, count), lengthTable)
             showStatement('* [{}] Code Pays: {}'.format(place, info.ofCountry), lengthTable)
