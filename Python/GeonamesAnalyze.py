@@ -1,7 +1,7 @@
 import re
 from heapq import nlargest
-from Place import *
-from GeonamesSearch import *
+from Python.Place import *
+from Python.GeonamesSearch import *
 
 THRESHOLD_KEYWORD = 2
 TOPHITS = 3
@@ -71,7 +71,7 @@ def analyze(str):
     resultDict['place'] = None
 
     extractedCityCountry = textProcessing(str)
-    #print(extractedCityCountry)
+    print(extractedCityCountry)
     extractedPlace = []
     dictCityCountry = dict()
     dictCityCountry['country'] = None
@@ -230,20 +230,22 @@ def analyzeResult(arrayResult):
                 sameContinent = False
             prevContinent = continent
 
-        if sameContinent is True and len:
-            print('Les pays ci-dessus se situent dans le meme continent {}'.format(prevContinent))
+        if countryStat:
+            if sameContinent is True and len:
+                print('Les pays ci-dessus se situent dans le meme continent {}'.format(prevContinent))
 
-        for country in countryStat:
-            if countryStat[country][0] > 60:
-                print('[{}] occupe une partie importante de résultat de {}%'.format(country, countryStat[country][0]))
+            for country in countryStat:
+                if countryStat[country][0] > 60:
+                    print('[{}] occupe une partie importante de résultat de {}%'.format(country, countryStat[country][0]))
 
     print('Villes statistique')
     if arrayResult['city'] is not None:
         for city in arrayResult['city']:
             info = arrayResult['city'][city][1]
-            for country in countryStat:
-                if info.ofCountry == countryStat[country][2]:
-                    print('[{}] appartient à {}'.format(city, country))
+            if countryStat:
+                for country in countryStat:
+                    if info.ofCountry == countryStat[country][2]:
+                        print('[{}] appartient à {}'.format(city, country))
 
 
 
