@@ -21,8 +21,8 @@ for trend in trends :
                 i+=1
                 nbTweets+=1
 
-    tweetDescription(text, nbTweets, docs1)
-    temp=analyze(text)
-    showResult(temp)
-    analyzeResult(temp)
-    print('****************************************************')
+    tweetDescription(text, nbTweets, docs1, trend)
+    #temp=analyze(text)
+    #showResult(temp)
+    #analyzeResult(temp)
+    #print('****************************************************')

@@ -7,13 +7,13 @@ import textdistance
 
 from spellchecker import SpellChecker
 
-from requeteMongo import searchTextInTitleFluxRSS
+from requeteMongo import searchTextInTitleFluxRSS, setEventDescriptionByTrend
 
 spell = SpellChecker(language = 'fr')
 TRESHOLD_APPEARENCE = 0.2
 
 #Fonction qui recherche la description des tweets
-def tweetDescription(text, nbTweets, docs1):
+def tweetDescription(text, nbTweets, docs1, trend):
     # find keywords
     listKeywords = createListKeywords(text, nbTweets)
     result = chooseResult(listKeywords, 10)
@@ -23,12 +23,13 @@ def tweetDescription(text, nbTweets, docs1):
     print(result)
 
     # find rss article
-    print('resultat flux rss : ' + searchTextInTitleFluxRSS(result))
+    rssArticle = searchTextInTitleFluxRSS(result)
+    print('resultat flux rss : ' + rssArticle)
 
     # find representative tweet
     representativeTweet = selectRepresentativeTweet(result, docs1)
     print('tweet representatif : ' + representativeTweet)
-    # setEventDescriptionByTrend(trend, top(list, 1))
+    setEventDescriptionByTrend(trend, rssArticle)
 
     print('***************************')
 
@@ -455,7 +456,7 @@ def chooseResult(listKeywords,n):
 def createResultText(mylist):
     text = ''
     for i in mylist:
-        text += ' '+i
+        text += ', '+i
 
     return text
 
