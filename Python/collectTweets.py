@@ -1,19 +1,16 @@
+import datetime
 import json
 
 import tweepy
 from retrying import retry
 from tweepy import OAuthHandler
-from Python.connexionLocal import *
-from Python.functionUtile import clean_text
-from Python.gestion_logging import log_message
-from Python.requeteMongo import *
 
-
-
+from connnexionMongo import *
+from functionUtile import clean_text
+from gestion_logging import log_message
+from requeteMongo import *
 
 # Twitter consumer key, consumer secret, access token, access secret
-
-
 ckey = "N4CogFTAcgyNxyuM8jvyrgmH7"
 csecret = "UPsquIqzXdjdD6TLRFp9vf3pU0LRfeOanuxpqwO9tJ3emATshO"
 atoken = "1070779812330041344-1NgUQko3NliICcTZVKgd9m0yEzDtcY"
@@ -111,7 +108,6 @@ def collect_tweet():
             saveCollectionMongo(data)
             if findIfEventExist(trend) > 0:
                 log_message("Cet evenement est déjà en base", "error")
-                #updateTweets(tweet_id, followers, retweet_count, favorite_count)
             else:
                 event = {'tendance':trend, 'description':'', 'lieu': '', 'date': '', 'status':False, 'flux_rss':'', 'tweets_representatifs':''}
                 events.save(event)
@@ -121,3 +117,4 @@ def collect_tweet():
 
 if __name__ == '__main__':
     collect_tweet()
+
