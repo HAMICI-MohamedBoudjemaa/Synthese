@@ -1,7 +1,7 @@
 import re
 from heapq import nlargest
-from Python.Place import *
-from Python.GeonamesSearch import *
+from Place import *
+from GeonamesSearch import *
 
 THRESHOLD_KEYWORD = 2
 TOPHITS = 3

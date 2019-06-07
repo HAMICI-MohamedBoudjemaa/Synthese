@@ -1,133 +1,90 @@
 {
-    "Equipe : tous les sports": {
-        "rss": "https://www.lequipe.fr/rss/actu_rss.xml"
-    },
-    "lefigaro : politique":{
-        "rss":"http://www.lefigaro.fr/rss/figaro_politique.xml"
-    },
-    "le monde : sante":{
-        "rss":"https://www.lemonde.fr/sante/rss_full.xml"
-    },
-    "le monde : economie":{
-        "rss":"https://www.lemonde.fr/economie/rss_full.xml"
-    },
-    "le monde : A la une": {
-        "rss": "https://www.lemonde.fr/rss/une.xml"
-    },
-    "Le monde : jeux videos": {
-        "rss": "https://www.lemonde.fr/jeux-video/rss_full.xml"
-    },
-    "France 24 : Culture": {
-        "rss": "https://www.france24.com/fr/culture/rss"
-    },
+   "politique":[
+   		{"rss": "http://www.lefigaro.fr/rss/figaro_politique.xml"},
+  		{"rss": "https://www.bfmtv.com/rss/politique/"},
+  		{"rss": "http://leplus.nouvelobs.com/tag/politique/rss.xml"},
+  		{"rss": "https://www.lepoint.fr/politique/rss.xml"}
+   ],
+   "sport":[
+   		{"rss": "https://www.lequipe.fr/rss/actu_rss.xml"},
+   		{"rss": "https://www.francetvinfo.fr/sports.rss"},
+   		{"rss": "https://www.france24.com/fr/sports/rss"},
+   		{"rss": "https://www.lemonde.fr/sport/rss_full.xml"},
+        {"rss": "https://www.lemonde.fr/football/rss_full.xml"},
+   		{"rss": "http://sport24.lefigaro.fr/rssfeeds/sport24-accueil.xml"},
+        {"rss": "https://www.lemonde.fr/jeux-olympiques/rss_full.xml"},
+	   	{"rss": "http://sport24.lefigaro.fr/rssfeeds/sport24-football.xml"},
+      	{"rss": "http://sport24.lefigaro.fr/rssfeeds/sport24-rugby.xml"},
+      	{"rss": "https://www.lepoint.fr/sport/rss.xml"}
+   ],
+   "culture":[
+   		{"rss": "http://www.nouvelobs.com/culture/rss.xml"},
+   		{"rss": "https://www.france24.com/fr/culture/rss"},
+   		{"rss": "https://www.masculin.com/rss/culture.xml"},
+   		{"rss": "https://www.bfmtv.com/rss/culture/"},
+   		{"rss": "https://www.francetvinfo.fr/culture.rss"},
+   		{"rss": "https://www.lemonde.fr/culture/rss_full.xml"},
+        {"rss": "https://www.lemonde.fr/musiques/rss_full.xml"},
+   		{"rss": "http://www.lefigaro.fr/rss/figaro_culture.xml"},
+   		{"rss": "https://www.lepoint.fr/culture/rss.xml"},
+    	{"rss":"http://www.lefigaro.fr/rss/figaro_musique.xml"},
+    	{"rss": "http://www.lefigaro.fr/rss/figaro_livres.xml"},
+    	{"rss": "http://www.lefigaro.fr/rss/figaro_arts-expositions.xml"},
+    	{"rss":"http://www.lefigaro.fr/rss/figaro_theatre.xml"}
+   ],
+   "sante":[
+   		{"rss": "https://www.lemonde.fr/sante/rss_full.xml"},
+   		{"rss": "http://www.lefigaro.fr/rss/figaro_sante.xml"}
+   ],
+   "économie":[
+   		{"rss": "https://www.lemonde.fr/economie/rss_full.xml"},
+   		{"rss": "https://www.france24.com/fr/eco-tech/rss"},
+   		{"rss": "http://www.lefigaro.fr/rss/figaro_economie.xml"},
+   		{"rss": "http://www.lefigaro.fr/rss/figaro_conso.xml"},
+   		{"rss": "http://www.lefigaro.fr/rss/figaro_retraite.xml"},
+   		{"rss": "http://www.lefigaro.fr/rss/figaro_societes.xml"},
+   		{"rss": "http://www.lefigaro.fr/rss/figaro_impots.xml"},
+   		{"rss": "http://www.lefigaro.fr/rss/figaro_medias.xml"},
+   		{"rss": "http://www.lefigaro.fr/rss/figaro_assurance.xml"},
+   		{"rss": "http://www.lefigaro.fr/rss/figaro_bourse.xml"},
+   		{"rss": "http://www.lefigaro.fr/rss/figaro_immobilier.xml"},
+   		{"rss": "http://www.lefigaro.fr/rss/figaro_finances-perso.xml"},
+   		{"rss": "http://www.lefigaro.fr/rss/figaro_management.xml"},
+   		{"rss": "https://www.lepoint.fr/economie/rss.xml"}
 
-    "France 24 : Économie": {
-        "rss": "https://www.france24.com/fr/eco-tech/rss"
-    },
-
-    "L'Obs : Culture": {
-        "rss": "http://www.nouvelobs.com/culture/rss.xml"
-    },
-
-    "L'Obs : Actualité": {
-        "rss": "http://www.nouvelobs.com/rss.xml"
-    },
-
-    "L'Obs: Education": {
-        "rss": "http://www.nouvelobs.com/education/rss.xml"
-    },
-
-    "Figaro : Etudiant": {
-        "rss": "https://etudiant.lefigaro.fr/rss/figaro_etudiant.xml"
-    },
-
-    "Figaro : Magazine": {
-        "rss": "http://www.lefigaro.fr/rss/figaro_lefigaromagazine.xml"
-    },
-
-    "Figaro : International": {
-        "rss": "http://www.lefigaro.fr/rss/figaro_international.xml"
-    },
-
-    "Figaro : Sciences et environnement": {
-        "rss": "http://www.lefigaro.fr/rss/figaro_sciences.xml"
-    },
-
-    "L'Obs : Monde":{
-        "rss": "http://www.nouvelobs.com/monde/rss.xml"
-    },
-
-    "Les Echos Week-End": {
-        "rss": "https://syndication.lesechos.fr/rss/rss_lesechos_week_end.xml"
-    },
-    "Echos : Tech-Medias": {
-        "rss": "https://syndication.lesechos.fr/rss/rss_tech_medias.xml"
-    },
-    "Les Echos - Finances & Marchés": {
-        "rss": "https://syndication.lesechos.fr/rss/rss_finance-marches.xml"
-    },
-    "Industries - Services - Les Echo": {
-        "rss": "https://syndication.lesechos.fr/rss/rss_industries_services.xml"
-    },
-    "francetvinfo : Monde": {
-        "rss": "https://www.francetvinfo.fr/monde.rss"
-    },
-
-    "francetvinfo : Decouvertes":{
-        "rss": "https://www.francetvinfo.fr/decouverte.rss"
-    },
-    "francetvinfo": {
-        "rss": "https://www.francetvinfo.fr/titres.rss"
-    },
-    "francetvinfo monde": {
-        "rss": "https://www.francetvinfo.fr/monde.rss"
-    },
-
-    "francetvinfo sports": {
-        "rss": "https://www.francetvinfo.fr/sports.rss"
-    },
-
-    "francetvinfo decouverte": {
-        "rss": "https://www.francetvinfo.fr/decouverte.rss"
-    },
-     "francetvinfo culture": {
-        "rss": "https://www.francetvinfo.fr/culture.rss"
-    },
-    "BFMTV Politique": {
-        "rss" : "https://www.bfmtv.com/rss/politique/"
-    },
-
-    "BFMTV cinema": {
-        "rss": "https://people.bfmtv.com/rss/cinema/"
-    },
-
-    "BFMTV Culture": {
-        "rss": "https://www.bfmtv.com/rss/culture/"
-    },
-
-    "BFMTV series": {
-        "rss": "https://people.bfmtv.com/rss/series/"
-    },
-    "BFMTV actu-tele": {
-        "rss": "https://vous.bfmtv.com/rss/actu-tele/"
-    },
-    "BFMTV actualite-people": {
-        "rss": "https://people.bfmtv.com/rss/actualite-people/"
-    },
-    "BFMTV internet": {
-        "rss": "https://hightech.bfmtv.com/rss/internet/"
-    },
-    "BFMTV application": {
-        "rss": " https://hightech.bfmtv.com/rss/application/"
-    },
-    "BFMTV Planete": {
-        "rss": "https://www.bfmtv.com/rss/planete/"
-    },
-     "Masculin.com : tous les articles": {
-        "rss": "https://www.masculin.com/rss/general.xml"
-    },
-     "Masculin.com : culture": {
-        "rss": "https://www.masculin.com/rss/culture.xml"
-    }
+   ],
+   "jeux videos":[
+   		{"rss": "https://www.lemonde.fr/jeux-video/rss_full.xml"}
+   ],
+   "education":[
+   		{"rss": "http://www.nouvelobs.com/education/rss.xml"}
+   ],
+   "decouvertes":[
+      	{"rss": "https://www.francetvinfo.fr/decouverte.rss"},
+      	{"rss":"https://www.france24.com/fr/decouvertes/rss"}
+    ],
+    "cinema": [
+      	{"rss": "https://people.bfmtv.com/rss/cinema/"},
+      	{"rss": "https://www.lepoint.fr/cinema/rss.xml"},
+      	{"rss": "http://www.lefigaro.fr/rss/figaro_cinema.xml"}
+    ],
+    "sciences": [
+      	{"rss": "http://www.lefigaro.fr/rss/figaro_sciences.xml"},
+      	{"rss": "https://hightech.bfmtv.com/rss/internet/"},
+      	{"rss": "https://www.bfmtv.com/rss/planete/"},
+      	{"rss": "https://www.france24.com/fr/planete/rss"},
+      	{"rss": " https://hightech.bfmtv.com/rss/application/"},
+      	{"rss": "https://syndication.lesechos.fr/rss/rss_industries_services.xml"},
+      	{"rss": "https://syndication.lesechos.fr/rss/rss_tech_medias.xml"},
+      	{"rss": "https://www.lemonde.fr/sciences/rss_full.xml"},
+      	{"rss": "https://www.lemonde.fr/technologies/rss_full.xml"},
+      	{"rss": "http://leplus.nouvelobs.com/tag/sciences/rss.xml"}
+    ],
+    "planète":[
+      	{"rss":"http://leplus.nouvelobs.com/tag/planete/rss.xml"}
+    ],
+    "series":[
+      	{"rss": "https://people.bfmtv.com/rss/series/"}
+    ]
 }
 
