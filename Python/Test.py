@@ -22,7 +22,7 @@ for trend in trends :
                 nbTweets+=1
 
     tweetDescription(text, nbTweets, docs1, trend)
-    #temp=analyze(text)
-    #showResult(temp)
-    #analyzeResult(temp)
+    temp=analyze(text)
+    showResult(temp)
+    analyzeResult(temp)
     #print('****************************************************')
