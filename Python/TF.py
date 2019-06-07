@@ -174,7 +174,7 @@ def TF(text, nbTweets):
     listWords = countEachWord(text)
     for word in listWords :
         listWords[word]=listWords[word]/nbTweets
-    print("This is TF")
+    #print("This is TF")
     return listWords
 
 
@@ -198,7 +198,7 @@ def bigrams(text, nbTweets):
     for word in listWords :
         listWords[word]=listWords[word]/nbTweets
 
-    print("This is bi-grams")
+    #print("This is bi-grams")
     return  listWords
 
 def trigrams(text, nbTweets):
@@ -220,7 +220,7 @@ def trigrams(text, nbTweets):
 
     for word in listWords :
         listWords[word]=listWords[word]/nbTweets
-    print("This is tri-grams")
+    #print("This is tri-grams")
     return  listWords
 
 
@@ -243,7 +243,7 @@ def quadrigrams(text, nbTweets):
 
     for word in listWords :
         listWords[word]=listWords[word]/nbTweets
-    print("This is quadri-grams")
+    #print("This is quadri-grams")
     return  listWords
 
 def fiftgrams(text, nbTweets):
@@ -265,7 +265,7 @@ def fiftgrams(text, nbTweets):
 
     for word in listWords :
         listWords[word]=listWords[word]/nbTweets
-    print("This is fift-grams")
+    #print("This is fift-grams")
     return  listWords
 
 
