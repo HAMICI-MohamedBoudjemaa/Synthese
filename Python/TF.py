@@ -11,6 +11,7 @@ from requeteMongo import searchTextInTitleFluxRSS, setEventDescriptionByTrend
 
 spell = SpellChecker(language = 'fr')
 TRESHOLD_APPEARENCE = 0.2
+p_stemmer = nltk.SnowballStemmer('french')
 
 #Fonction qui recherche la description des tweets
 def tweetDescription(text, nbTweets, docs1, trend):
@@ -137,7 +138,8 @@ def deleteStopWords(words) :
         if word not in stopWords:
             tmp.append(word)
     tmp = [word for word in tmp if (word.isalpha() or word.isnumeric())]
-    return tmp
+    stemmed_tokens = [p_stemmer.stem(i) for i in tmp]
+    return stemmed_tokens
 
 def lower(words):
     i=0
