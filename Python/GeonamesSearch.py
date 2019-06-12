@@ -51,21 +51,24 @@ def searchPlaceByName(name, dictCityCountry):
     mustnotQuery = [Q('match', featureClass='P'), Q('match', featureClass='A')]
     shouldQuery = []
 
+
     if dictCityCountry['country'] is not None:
         for i in range(len(dictCityCountry['country'])):
             query = Q('match', countryCode=dictCityCountry['country'][i])
             if query not in shouldQuery:
                 shouldQuery.append(query)
 
-    if dictCityCountry['city'] is not None:
-        for item in dictCityCountry['city']:
-            queryCountryCode = Q('match', countryCode=item['countryCode'])
-            queryAdminCode = Q('match', countryCode=item['admin2Code'])
-            #shouldQuery.append(Q('match', admin2Code=item['admin2Code']))
-            if queryCountryCode not in shouldQuery:
-                shouldQuery.append(queryCountryCode)
-            #if queryAdminCode not in shouldQuery:
-            #    shouldQuery.append(queryAdminCode)
+    #print(shouldQuery)
+
+    #if dictCityCountry['city'] is not None:
+    #    for item in dictCityCountry['city']:
+    #        queryCountryCode = Q('match', countryCode=item['countryCode'])
+    #        queryAdminCode = Q('match', admin2Code=item['admin2Code'])
+    #        shouldQuery.append(Q('match', admin2Code=item['admin2Code']))
+    #        if queryCountryCode not in shouldQuery:
+    #            shouldQuery.append(queryCountryCode)
+    #        if queryAdminCode not in shouldQuery:
+    #            shouldQuery.append(queryAdminCode)
 
     q = Q('bool',\
           must=mustQuery,\
