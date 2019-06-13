@@ -4,14 +4,18 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, sent_tokenize
 import math
 import textdistance
-
+from french_lefff_lemmatizer.french_lefff_lemmatizer import FrenchLefffLemmatizer
 from spellchecker import SpellChecker
-
 from requeteMongo import searchTextInTitleFluxRSS, setEventDescriptionByTrend
 
 spell = SpellChecker(language = 'fr')
-TRESHOLD_APPEARENCE = 0.2
+TRESHOLD_APPEARENCE = 0.1
 p_stemmer = nltk.SnowballStemmer('french')
+lemmatizer = FrenchLefffLemmatizer()
+COEF5=3.5
+COEF4=3
+COEF3=2.5
+COEF2=2
 
 #Fonction qui recherche la description des tweets
 def tweetDescription(text, nbTweets, docs1, trend):
@@ -23,15 +27,16 @@ def tweetDescription(text, nbTweets, docs1, trend):
     result = deleteDuplicates(result)
     print(result)
 
-    # find rss article
-    rssArticle = searchTextInTitleFluxRSS(result)
-    print('resultat flux rss : ' + rssArticle)
 
     # find representative tweet
     representativeTweet = selectRepresentativeTweet(result, docs1)
     print('tweet representatif : ' + representativeTweet)
-    setEventDescriptionByTrend(trend, rssArticle)
 
+    # find rss article
+    rssArticle = searchTextInTitleFluxRSS(result)
+    print('resultat flux rss : ' + rssArticle)
+
+    setEventDescriptionByTrend(trend, representativeTweet)
     print('***************************')
 
 def deleteDuplicates(text):
@@ -51,8 +56,9 @@ def deleteDuplicates(text):
         if words[i] != words[i + 1]:
             unique += ' ' + words[i]
         i += 1
-
+    unique+= ' ' + words[total_words-1]
     return unique
+
 def deleteSubstr(listKeywords = {}):
     i=0
     listKeywords1=listKeywords.copy()
@@ -62,7 +68,6 @@ def deleteSubstr(listKeywords = {}):
                 del listKeywords[w1]
                 del listKeywords1[w1]
     return listKeywords
-
 
 def createListKeywords(text, nbTweets):
     list = fiftgrams(text , nbTweets)
@@ -75,35 +80,31 @@ def createListKeywords(text, nbTweets):
     #print(ntop(list, 5))
     #print(top(list))
     lQUADRIGRAMS = ntop(list, 5)
-    lquadrigrams = top(list)
 
     list = trigrams(text , nbTweets)
     #print(ntop(list,5))
     #print(top(list))
     lTRIGRAMS = ntop(list, 5)
-    ltrigrams = top(list)
 
     list = bigrams(text , nbTweets)
     #print(ntop(list,5))
     #print(top(list))
     lBIGRAMS = ntop(list, 5)
-    lbigrams = top(list)
 
     list = TF(text, nbTweets)
     #print(ntop(list,5))
     #print(top(list))
     lTF = ntop(list,5)
-    ltf = top(list)
 
     mylist = []
     for i in lFIFTGRAMS:
-        mylist.append([i, lFIFTGRAMS[i]])
+        mylist.append([i, lFIFTGRAMS[i]*COEF5])
     for i in lQUADRIGRAMS:
-        mylist.append([i, lQUADRIGRAMS[i]])
+        mylist.append([i, lQUADRIGRAMS[i]*COEF4])
     for i in lTRIGRAMS:
-        mylist.append([i, lTRIGRAMS[i]])
+        mylist.append([i, lTRIGRAMS[i]*COEF3])
     for i in lBIGRAMS:
-        mylist.append([i, lBIGRAMS[i]])
+        mylist.append([i, lBIGRAMS[i]*COEF2])
     for i in lTF:
         mylist.append([i, lTF[i]])
 
@@ -113,10 +114,11 @@ def selectRepresentativeTweet(result, docs):
     max = 0
     representativeTweet = ''
     for doc in docs:
-        distance = textdistance.jaccard(result, doc['tweet_text'])
-        if distance>max and percentageBadOrthograph(doc['tweet_text'])<0.3:
-            max = distance
-            representativeTweet = doc['tweet_text']
+        if (doc['followers'] > 100000 and doc['retweet_count']>5 and percentageBadOrthograph(doc['tweet_text'])<0.3):
+            distance = textdistance.jaccard(result, stemText(doc['tweet_text']))
+            if distance>max and percentageBadOrthograph(doc['tweet_text'])<0.3:
+                max = distance
+                representativeTweet = doc['tweet_text']
     return representativeTweet
 
 def percentageBadOrthograph(text):
@@ -128,6 +130,11 @@ def percentageBadOrthograph(text):
         return 1
     return count_misspeled/nbWords(text)
 
+def stemText(text):
+    tokens = word_tokenize(text)
+    return createResultText(deleteStopWords(tokens))
+
+
 def deleteStopWords(words) :
     stopWords = set(stopwords.words('french'))
     myStopWords = ['alors', 'va', 'a', 'au', 'aucuns', 'aussi', 'autre', 'avant', 'avec', 'avoir', 'bon', 'car', 'ce', 'cela', 'ces', 'ceux', 'chaque', 'ci', 'comme', 'comment', 'dans', 'des', 'du', 'dedans', 'dehors', 'depuis', 'devrait', 'doit', 'donc', 'dos', 'début', 'elle', 'elles', 'en', 'encore', 'essai', 'est', 'et', 'eu', 'fait', 'faites', 'fois', 'font', 'hors', 'ici', 'il', 'ils', 'je', 'juste', 'la', 'le', 'les', 'leur', 'là', 'ma', 'maintenant', 'mais', 'mes', 'mine', 'moins', 'mon', 'mot', 'même', 'ni', 'nommés', 'notre', 'nous', 'ou', 'où', 'par', 'parce', 'pas', 'peut', 'peu', 'plupart', 'pour', 'pourquoi', 'quand', 'que', 'quel', 'quelle', 'quelles', 'quels', 'qui', 'sa', 'sans', 'ses', 'seulement', 'si', 'sien', 'son', 'sont', 'sous', 'soyez', 'sujet', 'sur', 'ta', 'tandis', 'tellement', 'tels', 'tes', 'ton', 'tous', 'tout', 'trop', 'très', 'tu', 'voient', 'vont', 'votre', 'vous', 'vu', 'ça', 'étaient', 'état', 'étions', 'été', 'être']
@@ -137,8 +144,9 @@ def deleteStopWords(words) :
     for word in words :
         if word not in stopWords:
             tmp.append(word)
-    tmp = [word for word in tmp if (word.isalpha() or word.isnumeric())]
+    tmp = [word for word in tmp if (word.isalpha() or word.isnumeric() or ' ' in word)]
     stemmed_tokens = [p_stemmer.stem(i) for i in tmp]
+    #lemmatized_tokens = [lemmatizer.lemmatize(i, 'all')[0][0] for i in tmp if len(lemmatizer.lemmatize(i, 'all')) !=0]
     return stemmed_tokens
 
 def lower(words):
@@ -199,6 +207,7 @@ def bigrams(text, nbTweets):
         listWords[word]=listWords[word]/nbTweets
 
     #print("This is bi-grams")
+    #listWords = deleteStopWords(listWords)
     return  listWords
 
 def trigrams(text, nbTweets):
@@ -221,6 +230,7 @@ def trigrams(text, nbTweets):
     for word in listWords :
         listWords[word]=listWords[word]/nbTweets
     #print("This is tri-grams")
+    #listWords = deleteStopWords(listWords)
     return  listWords
 
 
@@ -244,6 +254,7 @@ def quadrigrams(text, nbTweets):
     for word in listWords :
         listWords[word]=listWords[word]/nbTweets
     #print("This is quadri-grams")
+    #listWords = deleteStopWords(listWords)
     return  listWords
 
 def fiftgrams(text, nbTweets):
@@ -266,6 +277,7 @@ def fiftgrams(text, nbTweets):
     for word in listWords :
         listWords[word]=listWords[word]/nbTweets
     #print("This is fift-grams")
+    #listWords = deleteStopWords(listWords)
     return  listWords
 
 
@@ -458,7 +470,7 @@ def chooseResult(listKeywords,n):
 def createResultText(mylist):
     text = ''
     for i in mylist:
-        text += ', '+i
+        text += ' '+i
 
     return text
 
