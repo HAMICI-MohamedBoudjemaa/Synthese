@@ -5,13 +5,17 @@ from elasticsearch_dsl import Search
 from elasticsearch_dsl import Q
 
 FUZINESS = 90
-ELASTICSEARCHAUTHENTIFICATION = Elasticsearch(["https://elastic:ZsCkeJa6qrPR6YICH8nwCRZR@487a3c18579448be987a324822344a49.eu-central-1.aws.cloud.es.io:9243"])
+ELASTICSEARCHAUTHENTIFICATION = Elasticsearch(["https://elastic:mGK1rNCxN2eTY9c2wYNDdeAO@05d26646b8bd4fd880845957019896f4.eu-central-1.aws.cloud.es.io:9243"])
+GEONAMESINDEX = "geonames-2019.06.16"
+ALTERNATENAMESINDEX = "alternatenames-2019.06.16"
+COUNTRYINDEX = "countryinfo-2019.06.16"
+ADMINCODE = "admincode-2019.06.16"
 
 def searchCountryCityByName(name):
     res = None
     es = ELASTICSEARCHAUTHENTIFICATION
-    geonameSearch = Search(using=es, index="geoname-2019.05.30")
-    alternatenameSearch = Search(using=es, index="alternatenames-2019.05.30")
+    geonameSearch = Search(using=es, index=GEONAMESINDEX)
+    alternatenameSearch = Search(using=es, index=ALTERNATENAMESINDEX)
     translateSearch = alternatenameSearch.query("term", alternatename__keyword=name)
     translateSearch = translateSearch.query("term", isoLanguage__keyword='fr')
     translateSearch = translateSearch[0:10]
@@ -44,8 +48,8 @@ def searchCountryCityByName(name):
 def searchPlaceByName(name, dictCityCountry):
     res = None
     es = ELASTICSEARCHAUTHENTIFICATION
-    geonameSearch = Search(using=es, index="geoname-2019.05.30")
-    alternatenameSearch = Search(using=es, index="alternatenames-2019.05.30")
+    geonameSearch = Search(using=es, index=GEONAMESINDEX)
+    alternatenameSearch = Search(using=es, index=ALTERNATENAMESINDEX)
 
     mustQuery = [Q('term', name__keyword=name)]
     mustnotQuery = [Q('match', featureClass='P'), Q('match', featureClass='A')]
@@ -114,9 +118,8 @@ def searchPlaceByName(name, dictCityCountry):
     return res
 
 def searchCityByCode(code):
-    es = Elasticsearch(
-        ["https://elastic:ZsCkeJa6qrPR6YICH8nwCRZR@487a3c18579448be987a324822344a49.eu-central-1.aws.cloud.es.io:9243"])
-    s = Search(using=es, index="admincode-2019.05.30")
+    es = ELASTICSEARCHAUTHENTIFICATION
+    s = Search(using=es, index=ADMINCODE)
     s = s.query("term", code__keyword = code)
 
     response = s.execute()
@@ -130,7 +133,7 @@ def searchCityByCode(code):
 
 def searchAllByGeonameid(geonameid):
     es = ELASTICSEARCHAUTHENTIFICATION
-    geonameSearch = Search(using=es, index="geoname-2019.05.30")
+    geonameSearch = Search(using=es, index=GEONAMESINDEX)
     geonameSearch = geonameSearch[0:5]
     geonameSearch = geonameSearch.query("match", geonameid=geonameid)
     geonameSearch = geonameSearch.query("exists", field="admin2Code")
@@ -147,9 +150,8 @@ def searchAllByGeonameid(geonameid):
     return found
 
 def searchCityNameByCode(code):
-    es = Elasticsearch(
-        ["https://elastic:ZsCkeJa6qrPR6YICH8nwCRZR@487a3c18579448be987a324822344a49.eu-central-1.aws.cloud.es.io:9243"])
-    s = Search(using=es, index="admincode-2019.05.28")
+    es = ELASTICSEARCHAUTHENTIFICATION
+    s = Search(using=es, index=ADMINCODE)
     s = s[0:5]
     s = s.query("match", code=code)
 
@@ -168,7 +170,7 @@ def searchContinentByISO(iso):
 
     if res is None:
         es = ELASTICSEARCHAUTHENTIFICATION
-        s = Search(using=es, index="countryinfo-2019.05.30")
+        s = Search(using=es, index=COUNTRYINDEX)
         s = s[0:5]
         s = s.query("term", ISO__keyword=iso)
 
