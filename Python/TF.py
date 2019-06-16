@@ -12,6 +12,7 @@ spell = SpellChecker(language = 'fr')
 TRESHOLD_APPEARENCE = 0.1
 p_stemmer = nltk.SnowballStemmer('french')
 lemmatizer = FrenchLefffLemmatizer()
+STEM = False
 COEF5=3.5
 COEF4=3
 COEF3=2.5
@@ -23,6 +24,8 @@ def tweetDescription(text, nbTweets, docs1, trend):
     listKeywords = createListKeywords(text, nbTweets)
     result = chooseResult(listKeywords, 10)
     result = deleteSubstr(result)
+    print(text)
+    print(result)
     result = createResultText(result)
     result = deleteDuplicates(result)
     print(result)
@@ -145,9 +148,12 @@ def deleteStopWords(words) :
         if word not in stopWords:
             tmp.append(word)
     tmp = [word for word in tmp if (word.isalpha() or word.isnumeric() or ' ' in word)]
-    stemmed_tokens = [p_stemmer.stem(i) for i in tmp]
-    #lemmatized_tokens = [lemmatizer.lemmatize(i, 'all')[0][0] for i in tmp if len(lemmatizer.lemmatize(i, 'all')) !=0]
-    return stemmed_tokens
+    if STEM == True:
+
+        stemmed_tokens = [p_stemmer.stem(i) for i in tmp]
+        #lemmatized_tokens = [lemmatizer.lemmatize(i, 'all')[0][0] for i in tmp if len(lemmatizer.lemmatize(i, 'all')) !=0]
+        return stemmed_tokens
+    return tmp
 
 def lower(words):
     i=0

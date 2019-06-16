@@ -1,9 +1,9 @@
 import re
 from heapq import nlargest
-from Python.Place import *
-from Python.GeonamesSearch import *
+from Place import *
+from GeonamesSearch import *
 import time
-from Python.requeteMongo import *
+from requeteMongo import *
 
 THRESHOLD_KEYWORD = 3
 TOPHITS = 3
