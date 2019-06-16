@@ -6,7 +6,8 @@ from Python.requeteMongo import *
 
 ELASTICSEARCHAUTHENTIFICATION = Elasticsearch(["https://elastic:mGK1rNCxN2eTY9c2wYNDdeAO@05d26646b8bd4fd880845957019896f4.eu-central-1.aws.cloud.es.io:9243"])
 FLUXINDEX = "fluxrss-stemmed-2019.06.16"
-MIMMATCH = 4
+MIMMATCHDESCRIPTION = 3
+MINMATCHTITLE = 1
 
 def searchTextInTitleFluxRSS(search_text):
     res = None
@@ -15,7 +16,6 @@ def searchTextInTitleFluxRSS(search_text):
     mustQuery = []
     shouldQuery = []
     mustnotQuery = []
-
 
     if search_text:
         textSplit = search_text.split()
@@ -31,9 +31,55 @@ def searchTextInTitleFluxRSS(search_text):
               must=mustQuery,\
               should=shouldQuery,\
               must_not=mustnotQuery,\
-              minimum_should_match=MIMMATCH)
+              minimum_should_match=MIMMATCHDESCRIPTION)
 
         flowSearch = flowSearch.query(q)
+        flowSearch = flowSearch[0:1]
+
+        response = flowSearch.execute()
+        responseDict = response.to_dict()
+        nbRes = responseDict['hits']['total']['value']
+        if nbRes > 0:
+            placeHits = responseDict['hits']['hits']
+            i = 0
+            placeHit = placeHits[i]['_source']
+            print('Description : ' + placeHit['description'])
+            print('Score : ' + str(placeHits[i]['_score']))
+            print('Titre: ' + placeHit['titre'])
+            res = placeHit['titre']
+    return res
+
+def searchMultipleFluxRSS(keywords):
+    res = None
+    es = ELASTICSEARCHAUTHENTIFICATION
+    flowSearch = Search(using=es, index=FLUXINDEX)
+    shouldDescreptionQuery = []
+    shouldTitleQuery = []
+
+    if keywords:
+        textSplit = keywords.split()
+        for text in textSplit:
+            queryDescription = Q('match', description=text)
+            if queryDescription not in shouldDescreptionQuery:
+                shouldDescreptionQuery.append(queryDescription)
+
+            queryTitle = Q('match', titre=text)
+            if queryTitle not in shouldTitleQuery:
+                shouldTitleQuery.append(queryTitle)
+
+        boolDescreption = Q('bool',\
+              should=shouldDescreptionQuery,\
+              minimum_should_match=MIMMATCHDESCRIPTION)
+
+        boolTitle = Q('bool', \
+                    should=shouldTitleQuery, \
+                    minimum_should_match=MINMATCHTITLE)
+
+        mustMainBoolQuery = [boolDescreption, boolTitle]
+        boolMain = Q('bool', \
+                     must = mustMainBoolQuery)
+
+        flowSearch = flowSearch.query(boolMain)
         flowSearch = flowSearch[0:1]
 
         response = flowSearch.execute()
@@ -81,5 +127,5 @@ if __name__ == '__main__':
                 result = result + ' ' + trendStr
 
         print('Keywords: ' + result)
-        searchTextInTitleFluxRSS(result)
+        searchMultipleFluxRSS(result)
         print('*****************************\n')
