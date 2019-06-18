@@ -1,19 +1,21 @@
-from TF import *
-from requeteMongo import *
+from Python.TF import *
+from Python.requeteMongo import *
 from getdate import *
-from GeonamesAnalyze import *
+from Python.GeonamesAnalyze import *
 import textdistance
+from Python.requeteMongo import *
+from Python.fluxElastic import *
 
 trends = getAllTrend()
 
 nbtrends = 0
 for trend in trends :
-    print(trend)
+    print('Tendance: {}'.format(trend))
     nbtrends+=1
-    if nbtrends==99:
+    if nbtrends==100:
         break
     docs = getTweetByTrend(trend)
-    docs1 = getTweetByTrend(trend)
+    #docs1 = getTweetByTrend(trend)
     text = ''
     nbTweets = 0
     for doc in docs:
@@ -21,13 +23,14 @@ for trend in trends :
 
         if (doc['followers'] > 100000 and doc['retweet_count']>5 and percentageBadOrthograph(doc['tweet_text'])<0.3) :
             while i <= doc['retweet_count'] :
-                text += ' '+(doc['tweet_text'])
+                text += '. '+(doc['tweet_text'])
                 i+=1
                 nbTweets+=1
-    print(nbtrends)
+    #print(nbtrends)
+    #f = open("/Users/phucvu/Desktop/testText.txt", "w")
+    #f.write(text)
 
-    tweetDescription(text, nbTweets, docs1, trend)
-    #temp=analyze(text)
-    #showResult(temp)
-    #analyzeResult(temp)
-    #print('****************************************************')
+    tweetDescription(text, nbTweets, docs, trend)
+    tweetPlace(text, trend)
+    fluxRSS(text, nbTweets, trend)
+    print('*********************$$$***************************')

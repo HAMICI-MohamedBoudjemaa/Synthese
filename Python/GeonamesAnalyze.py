@@ -308,6 +308,13 @@ def writeResult(arrayResult):
 
     return arrayReturn
 
+def tweetPlace(text, trend):
+    temp=analyze(text)
+    showResult(temp)
+    analyzeResult(temp)
+    arrayPlace = writeResult(temp)
+    setEventLieuByTrend(trend, arrayPlace)
+
 
 
 

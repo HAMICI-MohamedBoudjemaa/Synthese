@@ -100,46 +100,26 @@ def searchMultipleFluxRSS(keywords):
                 res.append(element['idFlux']['$oid'])
     return res
 
-if __name__ == '__main__':
-    trends = getAllTrend()
-    for trend in trends:
-        print('Trend: ' + trend)
-        docs = getTweetByTrend(trend)
-        text = ''
-        nbTweets = 0
-        for doc in docs:
-            i = 0
-            if (doc['followers'] > 100000 and doc['retweet_count'] > 5 and percentageBadOrthograph(
-                    doc['tweet_text']) < 0.3):
-                while i <= doc['retweet_count']:
-                    text += '. ' + (doc['tweet_text'])
-                    i += 1
-                    nbTweets += 1
+def fluxRSS(text, nbTweets, trend):
+    listKeywords = createListKeywords(text, nbTweets)
+    result = chooseResult(listKeywords, 10)
+    result = deleteSubstr(result)
+    result = createResultText(result)
+    result = deleteDuplicates(result)
+    result = result.strip()  # GET RID OF THE FUCKING SPACE CHARACTER IN EVERY FUCKING LINE, WHY NO ONE ACKNOWLEDGE THAT
 
-        listKeywords = createListKeywords(text, nbTweets)
-        result = chooseResult(listKeywords, 10)
-        result = deleteSubstr(result)
-        result = createResultText(result)
-        result = deleteDuplicates(result)
-        result = result.strip() #GET RID OF THE FUCKING SPACE CHARACTER IN EVERY FUCKING LINE, WHY NO ONE ACKNOWLEDGE THAT
+    trend = trend.replace('#', '')
+    trendSplit = trend.split()
+    for trendStr in trendSplit:
+        if not result:
+            result = trendStr
+        else:
+            result = result + ' ' + trendStr
 
-        trend = trend.replace('#', '')
-        trendSplit = trend.split()
-        for trendStr in trendSplit:
-            if not result:
-                result = trendStr
-            else :
-                result = result + ' ' + trendStr
+    print('Keywords: ' + result)
+    setId = searchMultipleFluxRSS(result)
+    if setId is not None:
+        update = events.update({'tendance': trend},
+                               {'$set': {'flux_rss': setId, 'status': True}})
 
-        print('Keywords: ' + result)
-        setId = searchMultipleFluxRSS(result)
-        if setId is not None:
-            update = events.update({'tendance': trend},
-                                   {'$set': {'flux_rss': setId, 'status': True}})
-
-        temp = analyze(text)
-        showResult(temp)
-        analyzeResult(temp)
-        arrayPlace = writeResult(temp)
-        setEventLieuByTrend(trend, arrayPlace)
-        print('*****************************\n')
+    print('***********FIN***RSS*FEED************\n')
