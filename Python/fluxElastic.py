@@ -3,9 +3,10 @@ from elasticsearch_dsl import Search
 from elasticsearch_dsl import Q
 from Python.TF import *
 from Python.requeteMongo import *
+from Python.GeonamesAnalyze import *
 
 ELASTICSEARCHAUTHENTIFICATION = Elasticsearch(["https://elastic:mGK1rNCxN2eTY9c2wYNDdeAO@05d26646b8bd4fd880845957019896f4.eu-central-1.aws.cloud.es.io:9243"])
-FLUXINDEX = "fluxrss-stemmed-2019.06.16"
+FLUXINDEX = "fluxrss-stemmed-2019.06.17"
 MIMMATCHDESCRIPTION = 3
 MINMATCHTITLE = 1
 
@@ -34,19 +35,20 @@ def searchTextInTitleFluxRSS(search_text):
               minimum_should_match=MIMMATCHDESCRIPTION)
 
         flowSearch = flowSearch.query(q)
-        flowSearch = flowSearch[0:1]
+        flowSearch = flowSearch[0:3]
 
         response = flowSearch.execute()
         responseDict = response.to_dict()
         nbRes = responseDict['hits']['total']['value']
         if nbRes > 0:
             placeHits = responseDict['hits']['hits']
-            i = 0
-            placeHit = placeHits[i]['_source']
-            print('Description : ' + placeHit['description'])
-            print('Score : ' + str(placeHits[i]['_score']))
-            print('Titre: ' + placeHit['titre'])
-            res = placeHit['titre']
+            for placeHit in placeHits:
+                element = placeHit['_source']
+                print('Description : ' + element['description'])
+                print('Score : ' + str(placeHits['_score']))
+                print('Titre: ' + element['titre'])
+                print('id: ' + element['idFlux']['$oid'])
+                res.append(element['idFlux']['$oid'])
     return res
 
 def searchMultipleFluxRSS(keywords):
@@ -80,19 +82,22 @@ def searchMultipleFluxRSS(keywords):
                      must = mustMainBoolQuery)
 
         flowSearch = flowSearch.query(boolMain)
-        flowSearch = flowSearch[0:1]
+        flowSearch = flowSearch[0:3]
 
         response = flowSearch.execute()
         responseDict = response.to_dict()
         nbRes = responseDict['hits']['total']['value']
         if nbRes > 0:
             placeHits = responseDict['hits']['hits']
-            i = 0
-            placeHit = placeHits[i]['_source']
-            print('Description : ' + placeHit['description'])
-            print('Score : ' + str(placeHits[i]['_score']))
-            print('Titre: ' + placeHit['titre'])
-            res = placeHit['titre']
+            for placeHit in placeHits:
+                element = placeHit['_source']
+                print('Description : ' + element['description'])
+                print('Score : ' + str(placeHit['_score']))
+                print('Titre: ' + element['titre'])
+                print('id: ' + element['idFlux']['$oid'])
+                if res is None:
+                    res = []
+                res.append(element['idFlux']['$oid'])
     return res
 
 if __name__ == '__main__':
@@ -127,5 +132,14 @@ if __name__ == '__main__':
                 result = result + ' ' + trendStr
 
         print('Keywords: ' + result)
-        searchMultipleFluxRSS(result)
+        setId = searchMultipleFluxRSS(result)
+        if setId is not None:
+            update = events.update({'tendance': trend},
+                                   {'$set': {'flux_rss': setId, 'status': True}})
+
+        temp = analyze(text)
+        showResult(temp)
+        analyzeResult(temp)
+        arrayPlace = writeResult(temp)
+        setEventLieuByTrend(trend, arrayPlace)
         print('*****************************\n')
