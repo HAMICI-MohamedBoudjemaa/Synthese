@@ -14,7 +14,7 @@ for trend in trends :
     nbtrends+=1
     if nbtrends==100:
         break
-    docs = getTweetByTrend(trend)
+    docsdate, docs = getTweetByTrend(trend)
     #docs1 = getTweetByTrend(trend)
     text = ''
     nbTweets = 0
@@ -33,4 +33,6 @@ for trend in trends :
     tweetDescription(text, nbTweets, docs, trend)
     tweetPlace(text, trend)
     fluxRSS(text, nbTweets, trend)
+    datef = getDate2(docsdate)
+    setEventDateByTrend(trend, datef):
     print('*********************$$$***************************')

@@ -3,7 +3,9 @@ import datefinder
 import dateparser
 from dateutil import parser
 from datetime import datetime
+from datetime import timedelta
 from requeteMongo import *
+import time
 
 
 def most_frequent(List):
@@ -23,16 +25,22 @@ def most_frequent(List):
 
 def getDate_datefinder(txt):
     matches = datefinder.find_dates(txt)
+    now = datetime.datetime.now()
     list_date = []
-    for match in matches:
-        if match.year >= 2019:
-            list_date.append(match)
+    try:
+        for match in matches:
+            if match.day != now.day and match.year > 1900:
+                list_date.append(match)
+    except:
+        pass
+    
     return list_date
 
 
 def getDate(tweet, tweetDate):
     # str to date
-    tweetDate = parser.parse(tweetDate)
+    # tweetDate = parser.parse(tweetDate)
+        
 
     # str to list of word
     tweet = tweet.lower()
@@ -64,14 +72,14 @@ def getDate(tweet, tweetDate):
         if item in word_list[1:]:
             try:
                 if word_list[word_list.index(item) - 1] in After or word_list[word_list.index(item) + 1] in After:
-                    date_final.append(datetime.datetime(tweetDate.year, tweetDate.month, tweetDate.day + 7))
+                    date_final.append(tweetDate + timedelta(days=7))
             except:
                 pass
     for item in Month_in_txt:
         if item in word_list[1:]:
             try:
                 if word_list[word_list.index(item) - 1] in After or word_list[word_list.index(item) + 1] in After:
-                    date_final.append(datetime.datetime(tweetDate.year, tweetDate.month + 1, tweetDate.day))
+                    date_final.append(tweetDate + timedelta(months=1))
             except:
                 pass
 
@@ -82,16 +90,17 @@ def getDate(tweet, tweetDate):
     for item in word_list:
 
         if item == "demain":
-            date_final.append(datetime.datetime(tweetDate.year, tweetDate.month, tweetDate.day + 1))
+            date_final.append(tweetDate + timedelta(days=1))
         elif item == "aujourd'hui":
-            date_final.append(datetime.datetime(tweetDate.year, tweetDate.month, tweetDate.day))
+            date_final.append(tweetDate)
         elif item == "hier":
-            date_final.append(datetime.datetime(tweetDate.year, tweetDate.month, tweetDate.day - 1))
+            date_final.append(tweetDate - timedelta(days=1))
 
     date_format = []
-    for item in date_final:
-        date_format.append(item.strftime("%Y-%m-%d %H:%M"))
-        # print("date final", item)
+    if date_final:
+        for item in date_final:
+            date_format.append(item.strftime("%Y-%m-%d %H:%M"))
+            # print("date final", item)
 
     Frequency_Date, counter = most_frequent(date_format)
     # print("nost frequent date", Frequency_Date)
@@ -148,8 +157,18 @@ def getDate2(docs):
         else:
             tweetDate.append(tweet_date)
     tweetDate = [x for x in tweetDate if x != ""]
+    # print "***********************************************"
+    # print "**************Statistique**********************"
+    # print "***********************************************"
+    # print "Nombre de Date trouvée: 28"
+    # print "Nombre de Durée trouvée: 3"
+    # print "***********************************************"
+
+
 
     Frequency_Date, counter_date = most_frequent(tweetDate)
+    # print "La date choisit est : ", Frequency_Date
+    # print "Elle est présente dans la liste : 12 fois"
     if tweetDuration:
         Frequency_Duration, counter_duration = most_frequent(tweetDuration)
     else:
@@ -162,4 +181,30 @@ def getDate2(docs):
     else:
         return "We can not get a date for this trend"
 
+
+# trends = getAllTrend()
+# # print trends[42]
+# i = 0
+# for trend in trends :
+
+#     # Debut du decompte du temps
+#     # start_time = time.time()
+
+#     docs = getTweetByTrend(trend)
+
+#     # Affichage du temps d execution
+#     # print("Temps d execution de getTweetByTrend: %s secondes ---" % (time.time() - start_time))
+
+#     # Debut du decompte du temps
+#     # start_time = time.time()
+
+#     date = getDate2(docs)
+#     i += 1
+#     # Affichage du temps d execution
+#     # print("Temps d execution de getd")
+#     print (i)
+#     print (trend)
+#     print (date)
+#     print ("*******************************************************")
+#     setEventDateByTrend(trend, date)
 
