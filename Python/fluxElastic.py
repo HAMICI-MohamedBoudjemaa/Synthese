@@ -6,7 +6,7 @@ from Python.requeteMongo import *
 from Python.GeonamesAnalyze import *
 
 ELASTICSEARCHAUTHENTIFICATION = Elasticsearch(["https://elastic:mGK1rNCxN2eTY9c2wYNDdeAO@05d26646b8bd4fd880845957019896f4.eu-central-1.aws.cloud.es.io:9243"])
-FLUXINDEX = "fluxrss-stemmed-2019.06.17"
+FLUXINDEX = "fluxrss-stemmed-2019.06.20"
 MIMMATCHDESCRIPTION = 3
 MINMATCHTITLE = 1
 
